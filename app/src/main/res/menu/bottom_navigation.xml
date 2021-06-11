@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <item
+            android:id="@+id/action_live"
+            android:icon="@drawable/ic_live"
+            android:title="라이브" />
+        <item
+            android:title="" />
+        <item
+            android:id="@+id/action_profile"
+            android:icon="@drawable/ic_profile"
+            android:title="프로필" />
+
+    </menu>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.petcam">
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 사용 권한 -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- 카메라 권한 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera2.full" />
+    <uses-feature android:name="android.hardware.camera2.autofocus" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".streaming.StreamingActivity"></activity>
+
+        <service
+            android:name=".chatting.ChattingService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".chatting.SearchUserActivity" />
+        <activity android:name=".chatting.ChatroomActivity" />
+        <activity android:name=".chatting.ChattingActivity" />
+        <activity android:name=".profile.notice.EditNoticeActivity" />
+        <activity android:name=".profile.notice.EditCommentActivity" />
+        <activity android:name=".profile.notice.NoticeDetailActivity" />
+        <activity android:name=".profile.notice.NoticeActivity" />
+        <activity
+            android:name=".main.MainActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".access.IntroActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".access.RegisterActivity" />
+        <activity android:name=".access.LoginActivity" />
+        <activity android:name=".access.ForgotPasswordActivity" />
+        <activity android:name=".profile.SettingsActivity" />
+        <activity android:name=".profile.EditProfileActivity" /> <!-- Streaming Activity -->
+        <activity android:name="streaming.StreamingActicity" />
+        <activity android:name="streaming.BeforeStreamingActivity" />
+        <activity android:name="streaming.PlayerStreamingActivity" />
+
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
+    </application>
+
+</manifest>

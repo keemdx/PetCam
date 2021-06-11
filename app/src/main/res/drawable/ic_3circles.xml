@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="2461dp"
+    android:height="1515dp"
+    android:viewportWidth="2461"
+    android:viewportHeight="1515">
+    <path
+        android:fillColor="#7291f6"
+        android:name="타원 1"
+        android:pathData="m538 571c103.3 0 187 83.7 187 187c0 103.3 -83.7 187 -187 187c-103.3 0 -187 -83.7 -187 -187c0 -103.3 83.7 -187 187 -187z" />
+    <path
+        android:name="타원 1"
+        android:pathData="m538 572c102.7 0 186 83.3 186 186c0 102.7 -83.3 186 -186 186c-102.7 0 -186 -83.3 -186 -186c0 -102.7 83.3 -186 186 -186zm0 -1c-103.3 0 -187 83.7 -187 187c0 103.3 83.7 187 187 187c103.3 0 187 -83.7 187 -187c0 -103.3 -83.7 -187 -187 -187z"
+        android:fillColor="#333" />
+    <path
+        android:fillColor="#7291f6"
+        android:name="타원 1 복사"
+        android:pathData="m1231 571c103.3 0 187 83.7 187 187c0 103.3 -83.7 187 -187 187c-103.3 0 -187 -83.7 -187 -187c0 -103.3 83.7 -187 187 -187z" />
+    <path
+        android:name="타원 1 복사"
+        android:pathData="m1231 572c102.7 0 186 83.3 186 186c0 102.7 -83.3 186 -186 186c-102.7 0 -186 -83.3 -186 -186c0 -102.7 83.3 -186 186 -186zm0 -1c-103.3 0 -187 83.7 -187 187c0 103.3 83.7 187 187 187c103.3 0 187 -83.7 187 -187c0 -103.3 -83.7 -187 -187 -187z"
+        android:fillColor="#333" />
+    <path
+        android:fillColor="#7291f6"
+        android:name="타원 1 복사 2"
+        android:pathData="m1924 571c103.3 0 187 83.7 187 187c0 103.3 -83.7 187 -187 187c-103.3 0 -187 -83.7 -187 -187c0 -103.3 83.7 -187 187 -187z" />
+    <path
+        android:name="타원 1 복사 2"
+        android:pathData="m1924 572c102.7 0 186 83.3 186 186c0 102.7 -83.3 186 -186 186c-102.7 0 -186 -83.3 -186 -186c0 -102.7 83.3 -186 186 -186zm0 -1c-103.3 0 -187 83.7 -187 187c0 103.3 83.7 187 187 187c103.3 0 187 -83.7 187 -187c0 -103.3 -83.7 -187 -187 -187z"
+        android:fillColor="#333" />
+</vector>
