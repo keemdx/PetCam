@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class NoticeContents {
 
+    @SerializedName("comment_count") private int comment_count;
     @SerializedName("notice_title") private String notice_title;
     @SerializedName("notice_contents") private String notice_contents;
     @SerializedName("create_at") private String create_at;
@@ -76,5 +77,13 @@ public class NoticeContents {
 
     public void setWriter_profile(String writer_profile) {
         this.writer_profile = writer_profile;
+    }
+
+    public int getComment_count() {
+        return comment_count;
+    }
+
+    public void setComment_count(int comment_count) {
+        this.comment_count = comment_count;
     }
 }

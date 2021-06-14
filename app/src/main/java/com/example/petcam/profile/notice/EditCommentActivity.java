@@ -10,6 +10,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -28,6 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static androidx.core.content.ContextCompat.getColor;
 import static com.example.petcam.function.App.LOGIN_STATUS;
 import static com.example.petcam.function.App.NOTICE_COMMENT_CONTENTS;
 import static com.example.petcam.function.App.NOTICE_COMMENT_ID;
@@ -47,6 +50,7 @@ public class EditCommentActivity extends AppCompatActivity {
     private int commentID;
     private String commentContents;
     private TextView tv_edit_comment;
+    private InputMethodManager imm;
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -57,11 +61,6 @@ public class EditCommentActivity extends AppCompatActivity {
                 // 버튼을 클릭했을 경우,
                 case R.id.iv_close:
                     finish(); // 이 액티비티 화면을 닫는다.
-                    break;
-
-                // 댓글 수정 완료 버튼을 클릭했을 경우,
-                case R.id.tv_edit_comment:
-                    uploadEditNoticeComment();
                     break;
             }
         }
@@ -78,6 +77,8 @@ public class EditCommentActivity extends AppCompatActivity {
         // 서버와의 연결을 위한 ServiceApi 객체를 생성한다.
         mServiceApi = RetrofitClient.getClient().create(ServiceApi.class);
 
+        imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
         // 인텐트를 통해 넘어온 NOTICE_COMMENT ID, CONTENTS 값을 받는다.
         Intent intent = getIntent();
         commentID = intent.getExtras().getInt(NOTICE_COMMENT_ID);
@@ -86,7 +87,6 @@ public class EditCommentActivity extends AppCompatActivity {
 
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
         findViewById(R.id.iv_close).setOnClickListener(onClickListener);
-        findViewById(R.id.tv_edit_comment).setOnClickListener(onClickListener);
 
         // EditText 선언
         tv_edit_comment = (TextView) findViewById(R.id.tv_edit_comment); // 댓글 등록 버튼
@@ -111,10 +111,18 @@ public class EditCommentActivity extends AppCompatActivity {
                                       int count) {
 
                 // 입력된 값이 null이 아닐 결우 입력값과 정해준 변수값이 같을 때 버튼을 활성화한다.
-                if(s.toString().trim().length()==0) {
+                if(s.toString().trim().length()==0 || mCommentContents.getText().toString().equals(commentContents)) {
                     editButtonDisabled();
                 } else {
                     editButtonEnabled();
+                    // 댓글 수정 완료 버튼을 클릭했을 경우,
+                    tv_edit_comment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            uploadEditNoticeComment();
+                        }
+                    });
                 }
             }
             @Override
@@ -173,14 +181,14 @@ public class EditCommentActivity extends AppCompatActivity {
     // 업로드 버튼 비활성화
     @SuppressLint("ResourceAsColor")
     private void editButtonDisabled() {
-        tv_edit_comment.setEnabled(false); // 업로드 버튼 비활성화
-        tv_edit_comment.setTextColor(Color.parseColor("#D3D3D3"));
+        tv_edit_comment.setClickable(false); // 업로드 버튼 비활성화
+        tv_edit_comment.setTextColor(getColor(R.color.darkGray));
     }
 
     // 업로드 버튼 활성화
     @SuppressLint("ResourceAsColor")
     private void editButtonEnabled() {
-        tv_edit_comment.setEnabled(true); // 업로드 버튼 활성화
-        tv_edit_comment.setTextColor(Color.parseColor("#7291f6"));
+        tv_edit_comment.setClickable(true); // 업로드 버튼 활성화
+        tv_edit_comment.setTextColor(getColor(R.color.colorPrimary));
     }
 }

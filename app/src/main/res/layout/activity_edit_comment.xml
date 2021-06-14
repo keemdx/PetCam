@@ -52,7 +52,7 @@
                 android:layout_marginEnd="20dp"
                 android:fontFamily="@font/notosans_regular"
                 android:text="수정"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/darkGray"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

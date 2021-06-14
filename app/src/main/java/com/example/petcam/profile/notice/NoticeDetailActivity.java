@@ -19,8 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ import com.example.petcam.R;
 import com.example.petcam.network.ResultModel;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
+import com.example.petcam.profile.fanboard.FanboardAdapter;
 import com.example.petcam.widget.TimeString;
 
 import java.util.ArrayList;
@@ -42,6 +45,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.petcam.function.App.LOGIN_STATUS;
+import static com.example.petcam.function.App.NOTICE_COMMENT_CONTENTS;
+import static com.example.petcam.function.App.NOTICE_COMMENT_ID;
 import static com.example.petcam.function.App.NOTICE_CONTENTS;
 import static com.example.petcam.function.App.NOTICE_CREATE_AT;
 import static com.example.petcam.function.App.NOTICE_ID;
@@ -51,19 +56,20 @@ import static com.example.petcam.function.App.USER_UID;
 import static com.example.petcam.function.App.WRITER_ID;
 import static com.example.petcam.function.App.makeStatusBarBlack;
 
-public class NoticeDetailActivity extends AppCompatActivity {
+public class NoticeDetailActivity extends AppCompatActivity implements NoticeCommentAdapter.OnListItemSelectedInterface  {
 
     private SharedPreferences sharedPreferences;
+    private NoticeCommentAdapter noticeCommentAdapter;
     private ServiceApi mServiceApi;
-    private TextView mNoticeTitle, mNoticeContents, mNoticeCreateAt, mUploadComment, mWriterName;
+    private TextView mNoticeTitle, mNoticeContents, mNoticeCreateAt, mUploadComment, mWriterName, mCommentCount;
     private CircleImageView mWriterProfile;
+    private ImageView mMore;
     private EditText mComment;
     private LinearLayout mEmpty;
     private RecyclerView rv_notice_comment;
     private List<NoticeCommentItem> mDataList;
     private List<NoticeContents> mContentsList;
-    private NoticeCommentAdapter.CommentRecyclerViewClickListener mListener;
-    public int noticeID;
+    public int noticeID, noticeWriterID, commentCount;
     private Boolean editNoticePin;
     private String uid, writerID, writerProfileImage, writerName, noticeTitle, noticeContents, noticeCreateAt, noticePin;
 
@@ -103,11 +109,16 @@ public class NoticeDetailActivity extends AppCompatActivity {
         findViewById(R.id.iv_close).setOnClickListener(onClickListener);
         findViewById(R.id.iv_more).setOnClickListener(onClickListener);
 
+        sharedPreferences= NoticeDetailActivity.this.getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
+        uid = sharedPreferences.getString(USER_UID,"");
+
         // 공지사항 관련 선언
         mNoticeTitle = (TextView) findViewById(R.id.tv_notice_title); // 공지사항 타이틀
         mNoticeContents = (TextView) findViewById(R.id.tv_notice_contents); // 공지사항 내용
         mNoticeCreateAt = (TextView) findViewById(R.id.tv_notice_createAt); // 공지사항 작성 날짜
         mWriterName = (TextView) findViewById(R.id.tv_writer_name); // 공지사항 작성자 닉네임
+        mMore = (ImageView) findViewById(R.id.iv_more); // 수정, 삭제를 위한 팝업
+        mCommentCount = (TextView) findViewById(R.id.tv_comment_count); // 댓글 수
         mWriterProfile = (CircleImageView) findViewById(R.id.civ_writer_profile); // 공지사항 작성자 프로필 이미지
 
         // 댓글 관련 선언
@@ -149,7 +160,7 @@ public class NoticeDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     mContentsList = response.body();
                     if(!mContentsList.isEmpty()) {
-
+                       commentCount = mContentsList.get(0).getComment_count();
                        noticeCreateAt = mContentsList.get(0).getCreate_at();
                        noticeTitle = mContentsList.get(0).getNotice_title();
                        noticeContents = mContentsList.get(0).getNotice_contents();
@@ -158,6 +169,18 @@ public class NoticeDetailActivity extends AppCompatActivity {
                        writerName = mContentsList.get(0).getWriter_name();
                        writerProfileImage = mContentsList.get(0).getWriter_profile();
 
+                       // 글쓴이와 유저가 같으면 수정, 삭제가 가능하도록 한다.
+                       if (writerID.equals(uid)) {
+                           mMore.setVisibility(View.VISIBLE);
+                       } else {
+                           mMore.setVisibility(View.GONE);
+                       }
+                       // 댓글 수가 1보다 작다면 0으로 보여준다.
+                        if(commentCount > 0 ) {
+                            mCommentCount.setText(String.valueOf(commentCount));
+                        } else {
+                            mCommentCount.setText("0");
+                        }
                        mNoticeContents.setText(noticeContents);
                        mNoticeTitle.setText(noticeTitle);
                        mWriterName.setText(writerName);
@@ -198,7 +221,7 @@ public class NoticeDetailActivity extends AppCompatActivity {
                     if(!mDataList.isEmpty()) {
                         mEmpty.setVisibility(View.GONE);
                     }
-                    NoticeCommentAdapter noticeCommentAdapter = new NoticeCommentAdapter(mDataList, NoticeDetailActivity.this, mListener);
+                    noticeCommentAdapter = new NoticeCommentAdapter(mDataList, NoticeDetailActivity.this, NoticeDetailActivity.this, uid);
                     rv_notice_comment.setAdapter(noticeCommentAdapter);
                     noticeCommentAdapter.notifyDataSetChanged();
                 }
@@ -220,6 +243,7 @@ public class NoticeDetailActivity extends AppCompatActivity {
                 // 공지사항 제목 입력 여부 확인
                 if (s.toString().trim().length()==0) {
                     mUploadComment.setTextColor(getColor(R.color.darkGray));
+                    mUploadComment.setClickable(false);
                 } else {
                     mUploadComment.setTextColor(getColor(R.color.colorPrimary));
                     mUploadComment.setOnClickListener(new View.OnClickListener() {
@@ -247,8 +271,6 @@ public class NoticeDetailActivity extends AppCompatActivity {
     private void saveNoticeComment() {
         // DATE FORMAT
         String commentCreateAt =  String.valueOf(System.currentTimeMillis());
-        sharedPreferences= NoticeDetailActivity.this.getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
-        uid = sharedPreferences.getString(USER_UID,"");
         String commentContents = mComment.getText().toString();
 
         Log.d("uid : ", uid);
@@ -400,6 +422,94 @@ public class NoticeDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResultModel> call, Throwable t) {
                 Toast.makeText(NoticeDetailActivity.this, "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void onItemSelected(View view, int position, String commentID, String commentContents) {
+
+        NoticeCommentAdapter.ViewHolder viewHolder = (NoticeCommentAdapter.ViewHolder) rv_notice_comment.findViewHolderForAdapterPosition(position);
+
+        //creating a popup menu
+        PopupMenu popup = new PopupMenu(getApplicationContext(), viewHolder.iv_comment_more);
+        //inflating menu from xml resource
+        popup.inflate(R.menu.menu_comment);
+        //adding click listener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_edit:
+                        Intent intent = new Intent(getApplicationContext(), EditCommentActivity.class);
+                        intent.putExtra(NOTICE_COMMENT_ID, Integer.parseInt(commentID));
+                        intent.putExtra(NOTICE_COMMENT_CONTENTS, commentContents);
+                        startActivity(intent);
+                        break;
+                    case R.id.menu_delete:
+                        alertDialog(position, commentID); // 삭제하시겠습니까? 팝업창
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+        //displaying the popup
+        popup.show();
+
+    }
+    // =========================================================================================================
+    // 삭제 확인 팝업 다이알로그
+    public void alertDialog(final int position, String commentID) {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage("선택한 댓글을 삭제하시겠습니까?");
+        alert.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                removeComment(position, Integer.parseInt(commentID));
+            }
+        });
+        alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alert.create().show();
+    }
+
+    // =========================================================================================================
+    // DB 연결 후 해당 댓글 삭제
+    private void removeComment(int position, int commentID) {
+
+        mServiceApi.removeComment(commentID).enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+                Toast.makeText(getApplicationContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
+                // 성공적으로 DB 내 공지사항 삭제를 완료했을 경우 액티비티를 닫는다.
+                if(result.getResult().equals("success")) {
+                    //arraylist에서 해당 인덱스의 아이템 객체를 지워주고
+                    mDataList.remove(position);
+                    //어댑터에 알린다.
+                    noticeCommentAdapter.notifyItemRemoved(position);
+                    noticeCommentAdapter.notifyDataSetChanged();
+                    mCommentCount.setText(String.valueOf(commentCount - 1));
+
+
+
+
+                }
+            }
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "에러 발생", Toast.LENGTH_SHORT).show();
                 Log.e("에러 발생", t.getMessage());
             }
         });

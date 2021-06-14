@@ -17,8 +17,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.petcam.R;
+import com.example.petcam.main.MainActivity;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
+import com.example.petcam.profile.ChannelActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class NoticeFragment extends Fragment {
     private FloatingActionButton mUploadButton;
     private List<FixTopNoticeItem> mFixTopDataList;
     private List<NoticeItem> mDataList;
-    private String uid;
+    private String uid, myID;
 
      View.OnClickListener onClickListener = new View.OnClickListener() {
          @Override
@@ -86,8 +88,20 @@ public class NoticeFragment extends Fragment {
 
         // 쉐어드 프리퍼런스에 저장된 로그인된 사용자의 uid를 가져온다.
         sharedPreferences = getActivity().getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
-        uid = sharedPreferences.getString(USER_UID,"");
+        myID = sharedPreferences.getString(USER_UID, "");
 
+        if(getActivity().getClass().getSimpleName().equals("ChannelActivity")) {
+            ChannelActivity channelActivity = (ChannelActivity) getActivity();
+            uid = channelActivity.sendData();
+        } else {
+            uid = sharedPreferences.getString(USER_UID, "");
+        }
+
+        if(uid.equals(myID)) {
+            mUploadButton.setVisibility(View.VISIBLE);
+        } else {
+            mUploadButton.setVisibility(View.GONE);
+        }
         return view;
     }
 

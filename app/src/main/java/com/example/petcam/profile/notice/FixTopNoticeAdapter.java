@@ -55,12 +55,13 @@ public class FixTopNoticeAdapter extends RecyclerView.Adapter<FixTopNoticeAdapte
         long getTime = Long.parseLong(item.getCreate_at());
         holder.tv_time.setText(TimeString.formatTimeString(getTime));
 
-//        // 코멘트가 없을 경우 0으로 표시한다.
-//        if(item.getCommentCount() == null) {
-//            holder.tv_comment_count.setText("0");
-//        } else {
-//            holder.tv_comment_count.setText(item.getCommentCount());
-//        }
+        int commentCount = item.getComment_count();
+        // 코멘트가 없을 경우 0으로 표시한다.
+        if (commentCount  > 0) {
+            holder.tv_comment_count.setText(String.valueOf(commentCount));
+        } else {
+            holder.tv_comment_count.setText("0");
+        }
 
         holder.cv_fix_top_notice_item.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,13 +82,14 @@ public class FixTopNoticeAdapter extends RecyclerView.Adapter<FixTopNoticeAdapte
     // 리사이클러뷰 홀더
     public class ViewHolder extends RecyclerView.ViewHolder {
         public CardView cv_fix_top_notice_item;
-        public TextView tv_title, tv_time;
+        public TextView tv_title, tv_time, tv_comment_count;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.cv_fix_top_notice_item = itemView.findViewById(R.id.cv_fix_top_notice_item);
             this.tv_title = itemView.findViewById(R.id.tv_title);
             this.tv_time = itemView.findViewById(R.id.tv_createAt);
+            this.tv_comment_count = itemView.findViewById(R.id.tv_comment_count);
         }
     }
 }

@@ -57,11 +57,6 @@ public class EditNoticeActivity extends AppCompatActivity {
                 case R.id.iv_close:
                     finish(); // 이 액티비티 화면을 닫는다.
                     break;
-
-                // 공지 수정 완료 버튼을 클릭했을 경우,
-                case R.id.btn_update_notice:
-                    uploadEditNotice();
-                    break;
             }
         }
     };

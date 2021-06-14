@@ -11,6 +11,7 @@ public class NoticeCommentItem {
     @SerializedName("comment_text") private String comment_text;
     @SerializedName("comment_create_at") private String comment_create_at;
 
+
     public String getComment_id() {
         return comment_id;
     }

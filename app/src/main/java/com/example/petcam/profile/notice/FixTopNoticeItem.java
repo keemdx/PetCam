@@ -10,6 +10,7 @@ public class FixTopNoticeItem {
     @SerializedName("fix_top_pin") private String pin;
     @SerializedName("fix_notice_id") private int notice_id;
     @SerializedName("fix_top_writer_id") private String writer_id;
+    @SerializedName("comment_count") private int comment_count;
 
     public String getNotice_title() {
         return notice_title;
@@ -57,5 +58,13 @@ public class FixTopNoticeItem {
 
     public void setWriter_id(String writer_id) {
         this.writer_id = writer_id;
+    }
+
+    public int getComment_count() {
+        return comment_count;
+    }
+
+    public void setComment_count(int comment_count) {
+        this.comment_count = comment_count;
     }
 }

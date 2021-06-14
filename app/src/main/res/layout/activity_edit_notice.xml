@@ -106,7 +106,7 @@
                 android:layout_height="55dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/btn_round_corner"
+                android:background="@drawable/btn_dg_round_corner"
                 android:elevation="0dp"
                 android:text="수정"
                 android:textColor="#fff"
