@@ -1,64 +1,61 @@
 package com.example.petcam.profile.fanboard;
 
+import com.google.gson.annotations.SerializedName;
+
 public class FanboardItem {
 
-    private String name, text, time, commentCount, imageUrl;
-    private int commentImage;
+    @SerializedName("fanboard_contents") private String fanboard_contents;
+    @SerializedName("create_at") private String create_at;
+    @SerializedName("fanboard_id") private String fanboard_id;
+    @SerializedName("writer_id") private String writer_id;
+    @SerializedName("writer_name") private String writer_name;
+    @SerializedName("writer_photo") private String writer_photo;
 
-    public FanboardItem(String name, String text, String time, String commentCount, String imageUrl, int commentImage) {
-        this.name = name;
-        this.text = text;
-        this.time = time;
-        this.commentCount = commentCount;
-        this.imageUrl = imageUrl;
-        this.commentImage = commentImage;
+    public String getFanboard_contents() {
+        return fanboard_contents;
     }
 
-    public String getName() {
-        return name;
+    public void setFanboard_contents(String fanboard_contents) {
+        this.fanboard_contents = fanboard_contents;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getCreate_at() {
+        return create_at;
     }
 
-    public String getText() {
-        return text;
+    public void setCreate_at(String create_at) {
+        this.create_at = create_at;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public String getFanboard_id() {
+        return fanboard_id;
     }
 
-    public String getTime() {
-        return time;
+    public void setFanboard_id(String fanboard_id) {
+        this.fanboard_id = fanboard_id;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public String getWriter_id() {
+        return writer_id;
     }
 
-    public String getCommentCount() {
-        return commentCount;
+    public void setWriter_id(String writer_id) {
+        this.writer_id = writer_id;
     }
 
-    public void setCommentCount(String commentCount) {
-        this.commentCount = commentCount;
+    public String getWriter_name() {
+        return writer_name;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public void setWriter_name(String writer_name) {
+        this.writer_name = writer_name;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public String getWriter_photo() {
+        return writer_photo;
     }
 
-    public int getCommentImage() {
-        return commentImage;
-    }
-
-    public void setCommentImage(int commentImage) {
-        this.commentImage = commentImage;
+    public void setWriter_photo(String writer_photo) {
+        this.writer_photo = writer_photo;
     }
 }

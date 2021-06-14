@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cv_comment_item"
+    android:id="@+id/cv_fanboard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="1dp"
@@ -20,18 +20,20 @@
         android:padding="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/civ_comment_profile"
+            android:id="@+id/civ_fanboard_profile"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_comment_name"
+            android:id="@+id/tv_fanboard_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -44,69 +46,54 @@
             android:textColor="#000000"
             android:textSize="13sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/civ_comment_profile"
-            app:layout_constraintTop_toTopOf="@+id/civ_comment_profile" />
+            app:layout_constraintStart_toEndOf="@+id/civ_fanboard_profile"
+            app:layout_constraintTop_toTopOf="@+id/civ_fanboard_profile" />
 
         <TextView
-            android:id="@+id/tv_comment_text"
+            android:id="@+id/tv_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@+id/tv_fanboard_name"
+            app:layout_constraintTop_toTopOf="@+id/tv_fanboard_name" />
+
+        <TextView
+            android:id="@+id/tv_fanboard_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:ellipsize="end"
             android:maxLength="24"
             android:maxLines="1"
             android:text="좋은 말씀 너무 감사합니다!"
             android:textColor="#000000"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/tv_comment_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_comment_name" />
+            app:layout_constraintBottom_toBottomOf="@+id/civ_fanboard_profile"
+            app:layout_constraintStart_toStartOf="@+id/tv_fanboard_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_fanboard_name" />
+
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more" />
 
         <TextView
-            android:id="@+id/tv_comment_createAt"
+            android:id="@+id/tv_fanboard_createAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="10dp"
             android:text="30분전"
             android:textColor="@android:color/darker_gray"
             android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_comment_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_comment_name" />
-
-        <ImageView
-            android:id="@+id/iv_comment"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="7dp"
-            android:paddingTop="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/tv_comment_text"
-            app:layout_constraintTop_toBottomOf="@+id/tv_comment_text"
-            tools:srcCompat="@drawable/ic_gray_comment" />
-
-        <TextView
-            android:id="@+id/tv_comment_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="1"
-            android:textColor="#FF131313"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_comment"
-            app:layout_constraintStart_toEndOf="@+id/iv_comment"
-            app:layout_constraintTop_toTopOf="@+id/iv_comment" />
-
-        <TextView
-            android:id="@+id/tv_content3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/tv_fanboard_name"
+            app:layout_constraintEnd_toStartOf="@+id/iv_more"
+            app:layout_constraintTop_toTopOf="@+id/tv_fanboard_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
