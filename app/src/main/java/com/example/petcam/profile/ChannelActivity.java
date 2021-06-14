@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -130,16 +131,11 @@ public class ChannelActivity extends AppCompatActivity implements CompoundButton
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         if (isChecked) { // 체크했을 경우 '팬' -> DB 팔로잉 등록
-            mFollowStatus.setText("팬");
-            mFollowStatus.setPadding(40,0, 40, 0);
-            mFollowStatus.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-        }
-        else { // 체크 안 했을 경우 클릭 '팔로잉' 하기 -> DB 에서 팔로잉 지우기
-            mFollowStatus.setText("팔로잉");
-            @SuppressLint("UseCompatLoadingForDrawables") Drawable img = getResources().getDrawable(R.drawable.ic_add_small);
-            img.setTint(Color.WHITE);
-            mFollowStatus.setPadding(40,0, 28, 0);
-            mFollowStatus.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null);
+            isChecked();
+            saveFollow(userID, channelID);
+        } else { // 체크 안 했을 경우 클릭 '팔로잉' 하기 -> DB 에서 팔로잉 지우기
+            isNotChecked();
+            saveUnfollow(userID, channelID);
         }
     }
     // =========================================================================================================
@@ -174,14 +170,10 @@ public class ChannelActivity extends AppCompatActivity implements CompoundButton
                 }
 
                 if(followStatus) {
-                    mFollowStatus.setChecked(true);
+                    isChecked();
 
                 } else {
-                    mFollowStatus.setChecked(false);
-                    @SuppressLint("UseCompatLoadingForDrawables") Drawable img = getResources().getDrawable(R.drawable.ic_add_small);
-                    img.setTint(Color.WHITE);
-                    mFollowStatus.setPadding(40,0, 28, 0);
-                    mFollowStatus.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null);
+                    isNotChecked();
                 }
             }
 
@@ -194,12 +186,68 @@ public class ChannelActivity extends AppCompatActivity implements CompoundButton
         });
     }
 
-    // 팔로우 당하는 사람(to_id), 팔로우 거는 사람(from_id) 필요
-    private void saveFollow() {
+    // =========================================================================================================
+    // [팔로우] 팔로우 당하는 사람(to_id), 팔로우 거는 사람(from_id) 필요
 
+    private void saveFollow(String userID, String channelID) {
+
+        mServiceApi.saveFollow(userID, channelID).enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+                if(result.getResult().equals("success")) {
+                    getChannel(channelID, userID); // 채널 정보 가져오기
+                }
+            }
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
     }
 
-    private void saveUnFollow() {
+    // [언팔로우] 팔로우 삭제 당하는 사람(to_id), 하는 사람(from_id) 필요
+    private void saveUnfollow(String userID, String channelID) {
 
+        mServiceApi.saveUnfollow(userID, channelID).enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+                if(result.getResult().equals("success")) {
+                    getChannel(channelID, userID); // 채널 정보 가져오기
+                }
+            }
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
+    }
+
+    // =========================================================================================================
+    // UI 관련
+
+    private void isChecked() { // 체크했을 경우 UI
+        mFollowStatus.setChecked(true);
+        mFollowStatus.setText("팬");
+        mFollowStatus.setPadding(40,0, 40, 0);
+        mFollowStatus.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+    }
+
+    private void isNotChecked() { // 체크 해제할 경우 UI
+        mFollowStatus.setChecked(false);
+        mFollowStatus.setText("팔로잉");
+        @SuppressLint("UseCompatLoadingForDrawables") Drawable img = getResources().getDrawable(R.drawable.ic_add_small);
+        img.setTint(Color.WHITE);
+        mFollowStatus.setPadding(40,0, 28, 0);
+        mFollowStatus.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null);
     }
 }

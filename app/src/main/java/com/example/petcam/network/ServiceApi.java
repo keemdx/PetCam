@@ -88,29 +88,6 @@ public interface ServiceApi {
                                   @Field("userUid") String userUid,
                                   @Field("userStatus") String userStatus);
 
-    // 유저의 팔로잉, 팔로워 가져오기
-    @FormUrlEncoded
-    @POST("get-follow.php")
-    Call<ResultModel> getFollow (@Field("ID") String ID);
-
-    // 팔로잉 리스트 가져오기
-    @FormUrlEncoded
-    @POST("get-following-list.php")
-    Call<List<FollowListItem>> getFollowingList(@Field("userID") String userID);
-
-    // 팬 리스트 가져오기
-    @FormUrlEncoded
-    @POST("get-fan-list.php")
-    Call<List<FollowListItem>> getFanList(@Field("userID") String userID);
-
-    // 채널 정보 가져오기
-    @FormUrlEncoded
-    @POST("get-channel.php")
-    Call<ResultModel> getChannel(@Field("channelID") String channelID,
-                                 @Field("userID") String userID);
-
-
-
     // =========================================================================================================
 
     /** [공지사항 관련] **/
@@ -208,6 +185,43 @@ public interface ServiceApi {
     @FormUrlEncoded
     @POST("remove-fanboard.php")
     Call<ResultModel> removeFanboard( @Field("fanboardID") String fanboardID);
+
+    // =========================================================================================================
+
+    /** [프로필 및 채널 관련] **/
+
+    // 유저의 팔로잉, 팔로워 가져오기
+    @FormUrlEncoded
+    @POST("get-follow.php")
+    Call<ResultModel> getFollow (@Field("ID") String ID);
+
+    // 팔로잉 리스트 가져오기
+    @FormUrlEncoded
+    @POST("get-following-list.php")
+    Call<List<FollowListItem>> getFollowingList(@Field("userID") String userID);
+
+    // 팬 리스트 가져오기
+    @FormUrlEncoded
+    @POST("get-fan-list.php")
+    Call<List<FollowListItem>> getFanList(@Field("userID") String userID);
+
+    // 채널 정보 가져오기
+    @FormUrlEncoded
+    @POST("get-channel.php")
+    Call<ResultModel> getChannel(@Field("channelID") String channelID,
+                                 @Field("userID") String userID);
+
+    // 팔로우 (팬 등록)
+    @FormUrlEncoded
+    @POST("save-follow.php")
+    Call<ResultModel> saveFollow (@Field("userID") String userID,
+                                    @Field("channelID") String channelID);
+
+    // 언팔로우 (팬 해제)
+    @FormUrlEncoded
+    @POST("save-unfollow.php")
+    Call<ResultModel> saveUnfollow (@Field("userID") String userID,
+                                    @Field("channelID") String channelID);
 
     // =========================================================================================================
 

@@ -185,13 +185,14 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
                        mNoticeTitle.setText(noticeTitle);
                        mWriterName.setText(writerName);
 
-                        if (!writerProfileImage.isEmpty()) {
+                        if (writerProfileImage == null) {
+
                             // 현재 유저 프로필 이미지 보여주기
-                            Glide.with(NoticeDetailActivity.this).load(writerProfileImage).centerCrop().into(mWriterProfile);
+                            Glide.with(NoticeDetailActivity.this).load(R.drawable.ic_user).centerCrop().into(mWriterProfile);
 
                         } else {
                             // 현재 유저 프로필 이미지 보여주기
-                            Glide.with(NoticeDetailActivity.this).load(R.drawable.ic_user).centerCrop().into(mWriterProfile);
+                            Glide.with(NoticeDetailActivity.this).load(writerProfileImage).centerCrop().into(mWriterProfile);
                         }
 
                        // 글 작성 시간 (create at)
