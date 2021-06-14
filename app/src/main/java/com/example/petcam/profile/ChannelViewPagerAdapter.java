@@ -8,15 +8,19 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import com.example.petcam.profile.fanboard.FanboardFragment;
+
 import java.util.ArrayList;
 
 public class ChannelViewPagerAdapter extends FragmentStatePagerAdapter {
 
+    private int MAX_PAGES;
     private ArrayList<Fragment> fragmentList = new ArrayList<>();
     private ArrayList<String> fragmentTitle = new ArrayList<>();
 
-    public ChannelViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
-        super(fm, behavior);
+    public ChannelViewPagerAdapter(@NonNull FragmentManager fm, int maxPages) {
+        super(fm, maxPages);
+        this.MAX_PAGES = maxPages;
     }
 
     @NonNull
@@ -28,6 +32,12 @@ public class ChannelViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() { // Page 개수
         return fragmentList.size();
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+
+        return POSITION_NONE;
     }
 
     @Nullable
@@ -44,5 +54,7 @@ public class ChannelViewPagerAdapter extends FragmentStatePagerAdapter {
     public Parcelable saveState() {
         return null;
     }
+
+
 
 }

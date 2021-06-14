@@ -5,6 +5,8 @@ import com.example.petcam.chatting.ChatroomItem;
 import com.example.petcam.chatting.ChattingDataItem;
 import com.example.petcam.chatting.ChattingItem;
 import com.example.petcam.chatting.SearchUserItem;
+import com.example.petcam.profile.FollowListItem;
+import com.example.petcam.profile.fanboard.FanboardItem;
 import com.example.petcam.profile.notice.FixTopNoticeItem;
 import com.example.petcam.profile.notice.NoticeCommentItem;
 import com.example.petcam.profile.notice.NoticeContents;
@@ -86,6 +88,28 @@ public interface ServiceApi {
                                   @Field("userUid") String userUid,
                                   @Field("userStatus") String userStatus);
 
+    // 유저의 팔로잉, 팔로워 가져오기
+    @FormUrlEncoded
+    @POST("get-follow.php")
+    Call<ResultModel> getFollow (@Field("ID") String ID);
+
+    // 팔로잉 리스트 가져오기
+    @FormUrlEncoded
+    @POST("get-following-list.php")
+    Call<List<FollowListItem>> getFollowingList(@Field("userID") String userID);
+
+    // 팬 리스트 가져오기
+    @FormUrlEncoded
+    @POST("get-fan-list.php")
+    Call<List<FollowListItem>> getFanList(@Field("userID") String userID);
+
+    // 채널 정보 가져오기
+    @FormUrlEncoded
+    @POST("get-channel.php")
+    Call<ResultModel> getChannel(@Field("channelID") String channelID,
+                                 @Field("userID") String userID);
+
+
 
     // =========================================================================================================
 
@@ -157,6 +181,33 @@ public interface ServiceApi {
     @FormUrlEncoded
     @POST("remove-notice-comment.php")
     Call<ResultModel> removeComment(@Field("noticeID") int noticeID);
+
+    // =========================================================================================================
+
+    /** [팬보드 관련] **/
+
+    // 팬보드 리스트 가져오기
+    @GET("get-fanboard.php")
+    Call<List<FanboardItem>> getFanboard (@Query("userUid") String uid);
+
+    // 팬보드 업로드
+    @FormUrlEncoded
+    @POST("save-fanboard.php")
+    Call<ResultModel> saveFanboard (@Field("writerID") String writerID,
+                                 @Field("channelID") String channelID,
+                                 @Field("content") String content,
+                                 @Field("createAt") String createAt);
+
+    // 팬보드 게시물 수정
+    @FormUrlEncoded
+    @POST("edit-fanboard.php")
+    Call<ResultModel> editFanboard( @Field("fanboardID") String fanboardID,
+                                    @Field("content") String content);
+
+    // 팬보드 게시물 수정
+    @FormUrlEncoded
+    @POST("remove-fanboard.php")
+    Call<ResultModel> removeFanboard( @Field("fanboardID") String fanboardID);
 
     // =========================================================================================================
 

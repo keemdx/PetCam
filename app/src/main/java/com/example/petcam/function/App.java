@@ -34,6 +34,7 @@ public class App extends Application {
     public static String USER_EMAIL = "user_email";
     public static String USER_IMAGE = "user_image_url"; // 로그인한 유저의 프로필 사진 주소
     public static String USER_STATUS = "user_status"; // 유저 상태 메시지
+    public static String CHANNEL_ID = "channel_id"; // 채널 아이디 (상대 유저 아이디)
 
     public static String NOTICE_TITLE = "notice_title"; // 공지사항 제목
     public static String NOTICE_CONTENTS = "notice_contents"; // 공지사항 컨텐츠 (내용)
@@ -44,6 +45,10 @@ public class App extends Application {
 
     public static String NOTICE_COMMENT_CONTENTS = "notice_comment_contents"; // 공지사항 댓글 컨텐츠 (내용)
     public static String NOTICE_COMMENT_ID = "notice_comment_id"; // 공지사항 댓글 ID 번호
+
+    /* 팬보드 */
+    public static String FANBOARD_CONTENT = "fanboard_content"; // 팬보드 컨텐츠 (내용)
+    public static String FANBOARD_ID = "fanboard_id"; // 팬보드 ID 번호
 
     /* 채팅 */
     public static String ROOM_ID = "room_id"; // 채팅 방 번호 ID

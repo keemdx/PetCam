@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:name="android.hardware.camera2.full" />
     <uses-feature android:name="android.hardware.camera2.autofocus" />
 
@@ -32,7 +32,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".streaming.StreamingActivity"></activity>
+        <activity android:name=".profile.FollowListActivity"/>
+        <activity android:name=".profile.ChannelActivity" />
 
         <service
             android:name=".chatting.ChattingService"
@@ -61,9 +62,6 @@
         <activity android:name=".access.ForgotPasswordActivity" />
         <activity android:name=".profile.SettingsActivity" />
         <activity android:name=".profile.EditProfileActivity" /> <!-- Streaming Activity -->
-        <activity android:name="streaming.StreamingActicity" />
-        <activity android:name="streaming.BeforeStreamingActivity" />
-        <activity android:name="streaming.PlayerStreamingActivity" />
 
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"

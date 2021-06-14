@@ -11,6 +11,7 @@ public class ResultModel {
     private String userName;
     private String userPhoto;
     private String userStatus;
+    private boolean followStatus;
 
     public String getResult() {
         return result;
@@ -58,5 +59,13 @@ public class ResultModel {
 
     public void setUserStatus(String userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public boolean isFollowStatus() {
+        return followStatus;
+    }
+
+    public void setFollowStatus(boolean followStatus) {
+        this.followStatus = followStatus;
     }
 }
