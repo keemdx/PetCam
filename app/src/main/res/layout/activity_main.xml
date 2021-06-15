@@ -61,7 +61,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_upload"
+            android:id="@+id/btn_streaming"
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:layout_gravity="center"
