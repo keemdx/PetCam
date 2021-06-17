@@ -68,6 +68,7 @@ import retrofit2.Response;
 import static com.example.petcam.function.App.ACCESS_KEY;
 import static com.example.petcam.function.App.BUCKET_NAME;
 import static com.example.petcam.function.App.LOGIN_STATUS;
+import static com.example.petcam.function.App.ROOM_ID;
 import static com.example.petcam.function.App.SECRET_KEY;
 import static com.example.petcam.function.App.STREAMING_URL;
 import static com.example.petcam.function.App.USER_UID;
@@ -308,6 +309,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
             rtmpCamera1.stopStream();
             rtmpCamera1.stopPreview();
+            saveRoomStatus(roomID);
         }
     }
     // =========================================================================================================
@@ -340,6 +342,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                     rtmpCamera1.stopStream();
                     rtmpCamera1.stopPreview();
                 }
+                saveRoomStatus(roomID); // 룸 상태 바꿔주기
                 finish(); // 액티비티 종료
             }
         });
@@ -350,6 +353,30 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             }
         });
         alert.create().show();
+    }
+
+    // =========================================================================================================
+
+    // 방송 종료 : DB 와 연결해서 roomStatus 를 (ON -> OFF)로 바꾼다.
+
+    @SuppressLint("SimpleDateFormat")
+    private void saveRoomStatus(String roomID) {
+
+        mServiceApi.saveRoomStatus(roomID, "OFF").enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+            }
+
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(StreamingActivity.this, "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
     }
 
     // =========================================================================================================

@@ -320,15 +320,21 @@ public interface ServiceApi {
     Call<ResultModel> saveThumbnail (@Field("uri") String uri,
                                   @Field("roomID") String roomID);
 
-    // 채팅 메시지 리스트 가져오기
+    //  라이브 중인 친구 리스트 가져오기
     @FormUrlEncoded
     @POST("get-live-friends.php")
     Call<List<FollowingItem>>getLiveNowFriends (@Field("userID") String userID);
 
-    // 채팅 메시지 리스트 가져오기
+    // 실시간 방송 뷰어(시청자) 순으로 가져오기
     @FormUrlEncoded
     @POST("get-live-rooms.php")
     Call<List<PopularItem>>getHotLiveRooms(@Field("userID") String userID);
+
+    // DB 와 연결해서 roomStatus 를 (ON -> OFF)로 바꾼다.
+    @FormUrlEncoded
+    @POST("streaming-room.php")
+    Call<ResultModel> saveRoomStatus (@Field("roomID") String roomID,
+                                      @Field("status") String status);
 
     // =========================================================================================================
 
