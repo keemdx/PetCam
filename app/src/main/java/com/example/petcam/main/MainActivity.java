@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                     int audioPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
                     if(cameraPermission == PackageManager.PERMISSION_DENIED || audioPermission == PackageManager.PERMISSION_DENIED) { // 권한 없어서 요청
                         ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                                Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO
+                                Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE
                         }, MY_PERMISSIONS_REQUEST);
                     } else { // 권한 있음
                         startActivity(intent);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                     //동의 했을 경우 .....
                     startActivity(intent);
                 } else { //거부했을 경우
