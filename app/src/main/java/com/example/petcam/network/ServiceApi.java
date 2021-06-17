@@ -299,4 +299,24 @@ public interface ServiceApi {
                                        @Field("userID") String userID);
 
     // =========================================================================================================
+
+    /** [라이브 스트리밍 관련] **/
+
+    // 스트리밍을 위한 룸 생성
+    @FormUrlEncoded
+    @POST("streaming-room.php")
+    Call<ResultModel> createStreamingRoom (@Field("roomID") String roomID,
+                                  @Field("streamerID") String streamerID,
+                                  @Field("roomTitle") String roomTitle,
+                                  @Field("roomStatus") String roomStatus,
+                                  @Field("viewer") int viewer);
+
+    // 스트리밍 룸에 Thumbnail 전송 (방송 시작 후 캡쳐된 이미지)
+    @FormUrlEncoded
+    @POST("streaming-room.php")
+    Call<ResultModel> saveThumbnail (@Field("uri") String uri,
+                                  @Field("roomID") String roomID);
+
+    // =========================================================================================================
+
 }

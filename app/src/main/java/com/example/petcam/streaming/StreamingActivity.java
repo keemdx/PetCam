@@ -5,12 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.HandlerThread;
+import android.util.Log;
+import android.view.PixelCopy;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -18,12 +27,27 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.example.petcam.R;
+import com.example.petcam.function.App;
+import com.example.petcam.network.ResultModel;
+import com.example.petcam.network.RetrofitClient;
+import com.example.petcam.network.ServiceApi;
 import com.google.android.material.appbar.AppBarLayout;
 import com.pedro.encoder.input.video.CameraOpenException;
 import com.pedro.rtmp.utils.ConnectCheckerRtmp;
@@ -31,6 +55,22 @@ import com.pedro.rtplibrary.rtmp.RtmpCamera1;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.example.petcam.function.App.ACCESS_KEY;
+import static com.example.petcam.function.App.BUCKET_NAME;
+import static com.example.petcam.function.App.LOGIN_STATUS;
+import static com.example.petcam.function.App.SECRET_KEY;
+import static com.example.petcam.function.App.STREAMING_URL;
+import static com.example.petcam.function.App.USER_UID;
 import static com.example.petcam.function.App.makeStatusBarBlack;
 
 /**
@@ -42,20 +82,33 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 public class StreamingActivity extends AppCompatActivity implements ConnectCheckerRtmp, SurfaceHolder.Callback {
 
     // 스트리밍 관련 UI
+    private SurfaceView mSurfaceView;
     private RtmpCamera1 rtmpCamera1;
     private Animation mAnimation;
-    private ImageView mMic, mCam;
+    private ImageView mMic;
     private TextView mCount;
     private ConstraintLayout mLayoutStreamingIcon;
     private LinearLayout mLayoutBeforeStreaming;
     private AppBarLayout mLayoutStreamingChat;
     private Button mStreamingStartButton;
 
+    // 방 정보 관련
+    private String roomID, userID;
+    private EditText mRoomTitle;
+
+    // 방 정보 관련 (Status)
+    public static String ON = "ON";
+    public static String OFF = "OFF";
+
+    private ServiceApi mServiceApi;
+    private SharedPreferences pref;
+
     // 방송 시작 전 카운트 다운을 위한 용도
     int count = 3;
     private CountDownTimer countDownTimer;
     private static final int MILLISINFUTURE = 4 * 1000; // 카운트를 위한 총 시간 (4초)
     private static final int COUNT_DOWN_INTERVAL = 1000; // onTick()에 대한 시간 (1초)
+
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @SuppressLint("UseCompatLoadingForDrawables")
@@ -66,12 +119,11 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
                 case R.id.btn_start_streaming: // 라이브 방송 시작 버튼
 
-                    handler.postDelayed(runnable, 2500); // 2.5초 후 방송 시작
-                    countDownTimer();
-                    countDownTimer.start(); // 카운트 다운 시작
+                    createStreamingRoom(userID);// 방 생성 및 DB 저장 후 방송 시작
                     break;
 
                 case R.id.iv_finish: // 라이브 방송 종료 버튼
+
                     if (rtmpCamera1.isStreaming()) {
                         alertDialog(view); // 방송 종료 확인 다이알로그를 보여준다. -> 확인 시 방송 종료
                     } else {
@@ -119,6 +171,13 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         // 액티비티 시작후 키보드 감추기
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        // 서버와의 연결을 위한 ServiceApi 객체를 생성한다.
+        mServiceApi = RetrofitClient.getClient().create(ServiceApi.class);
+
+        // 저장된 유저 정보 가져오기
+        pref = getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
+        userID = pref.getString(USER_UID, ""); // 유저 프로필 아이디
+
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
         findViewById(R.id.iv_finish).setOnClickListener(onClickListener);
         findViewById(R.id.iv_switch_camera).setOnClickListener(onClickListener);
@@ -132,9 +191,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         mLayoutStreamingChat = (AppBarLayout) findViewById(R.id.bottom_start_streaming);
         mStreamingStartButton = (Button) findViewById(R.id.btn_start_streaming);
         mLayoutBeforeStreaming = (LinearLayout) findViewById(R.id.layout_before_streaming);
+        mRoomTitle = (EditText) findViewById(R.id.et_title); // 스트리밍 제목
 
         // 방송 화면을 그려주는 SurfaceView
-        SurfaceView mSurfaceView = (SurfaceView) findViewById(R.id.view_surface);
+        mSurfaceView = (SurfaceView) findViewById(R.id.view_surface);
         mSurfaceView.setBackgroundColor(Color.TRANSPARENT);
         mSurfaceView.getHolder().addCallback(this);
         rtmpCamera1 = new RtmpCamera1(mSurfaceView, this);
@@ -151,7 +211,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             if (!rtmpCamera1.isStreaming()) { // 현재 스트리밍 중이 아니라면, 실행시킨다.
 
                 if (rtmpCamera1.prepareAudio() && rtmpCamera1.prepareVideo()) { // 비디오, 오디오 값이 null 이 아니라면 스트리밍을 시작한다.
-                    rtmpCamera1.startStream("rtmp://15.164.220.155/live/hello"); // 라이브 스트리밍 고유 주소
+                    rtmpCamera1.startStream("rtmp://15.164.220.155/live/" + roomID); // 라이브 스트리밍 고유 주소
                 } else {
                     Toast.makeText(getApplicationContext(), "Error preparing stream, This device cant do it", Toast.LENGTH_SHORT).show();
                 }
@@ -216,7 +276,6 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             @Override
             public void run() {
                 Toast.makeText(getApplicationContext(), "Connection Success", Toast.LENGTH_LONG).show();
-
             }
         });
     }
@@ -241,16 +300,15 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     @Override
     protected void onPause() {
         super.onPause();
-        if (rtmpCamera1.isStreaming()) {
-            rtmpCamera1.stopStream();
-            rtmpCamera1.stopPreview();
-        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
+        if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
+            rtmpCamera1.stopStream();
+            rtmpCamera1.stopPreview();
+        }
     }
     // =========================================================================================================
 
@@ -296,6 +354,44 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
     // =========================================================================================================
 
+    // 생성된 방 정보 DB 저장 후 스트리밍 시작!
+    private void createStreamingRoom(String userID) {
+
+        Date date = new Date();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yy" + "MM" + "dd" + "HH" + "mm" + "ss");
+        String today = format.format(date);
+
+        roomID = userID + today; // 룸 ID 생성
+        String streamerID = userID; // 스트리머 UID
+        String roomTitle = mRoomTitle.getText().toString(); // 룸 생성 시 입력한 타이틀
+        String roomStatus = ON; // 현재 방송 상태
+        int viewer = 0; // 시청자 수 (1 이상일 경우만 표시)
+
+        mServiceApi.createStreamingRoom(roomID, streamerID, roomTitle, roomStatus, viewer).enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+
+                if (result.getResult().equals("success")) { // DB 저장 정상적으로 되었다면, 방송 시작!
+                    handler.postDelayed(runnable, 3000); // 3초 후 방송 시작
+                    countDownTimer();
+                    countDownTimer.start(); // 카운트 다운 시작
+                }
+            }
+
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
+    }
+
+    // =========================================================================================================
+
     // 방송 전 카운트 다운 진행 (3, 2, 1, Start!)
     public void countDownTimer() {
         countDownTimer = new CountDownTimer(MILLISINFUTURE, COUNT_DOWN_INTERVAL) {
@@ -326,11 +422,11 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
                 Thread startFadeOut = new Thread(new Runnable() { // 카운트 다운이 끝나면, Start! 표시와 함께 Fade out 시킨다.
                     public void run() {
-                        try{
+                        try {
                             mAnimation = new AlphaAnimation(1.0f, 0.0f); // Fade out 애니메이션
                             mAnimation.setDuration(2000);
                             mCount.startAnimation(mAnimation);
-                        }catch (Throwable t){
+                        } catch (Throwable t) {
 
                         }
                         mCount.setVisibility(View.GONE);
@@ -343,7 +439,112 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 mLayoutStreamingIcon.setVisibility(View.VISIBLE);
                 mLayoutStreamingChat.setVisibility(View.VISIBLE);
 
+                if (rtmpCamera1.isStreaming()) {
+                    screenShot(); // 현재 화면 스크린샷!
+                }
+
             }
         };
     }
+
+    // =========================================================================================================
+
+    // Thumbnail 을 위해 SurfaceView 스크린샷 찍어서 저장하기
+
+    public void screenShot(){ // SurfaceView 스크린샷 찍기
+
+        // SurfaceView 를 BitMap 으로 복사한다. (PixelCopy 사용)
+        Bitmap bitmap = Bitmap.createBitmap(mSurfaceView.getWidth(), mSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        mSurfaceView.draw(canvas);
+
+        // 이미지 처리를 오프로드하는 핸들러 스레드를 만듭니다.
+        final HandlerThread handlerThread = new HandlerThread("PixelCopier");
+        handlerThread.start();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            PixelCopy.request(mSurfaceView, bitmap, (copyResult) -> {
+                if (copyResult == PixelCopy.SUCCESS) { // 복사가 성공적이라면, 파일을 png 파일로 변환해서 db로 저장한다.
+                    String fileName = "image_screenshot_" + System.currentTimeMillis();
+                    File file = new File(Environment.getExternalStorageDirectory(), fileName);
+                    FileOutputStream os = null;
+                    try{
+                        os = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);   // 비트맵을 PNG 파일로 변환한다.
+                        os.close();
+                        uploadImageFile(file, fileName); // 이미지 파일 업로드
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+
+                } else { // 복사 실패 시
+                    Toast toast = Toast.makeText(getApplication(),
+                            "Failed to copyPixels: " + copyResult, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                handlerThread.quitSafely();
+            }, new Handler(handlerThread.getLooper()));
+        }
+    }
+
+    // AWS s3 스토리지에 캡쳐된 이미지 업로드
+    public void uploadImageFile(File file, String fileName) {
+
+        // AWS s3 스토리지 설정
+        AWSCredentials awsCredentials = new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY);
+        AmazonS3Client s3Client = new AmazonS3Client(awsCredentials, Region.getRegion(Regions.AP_NORTHEAST_2));
+
+        TransferUtility transferUtility = TransferUtility.builder().s3Client(s3Client).context(StreamingActivity.this).build();
+        TransferNetworkLossHandler.getInstance(StreamingActivity.this);
+
+        // streaming 경로에 이미지 업로드
+        TransferObserver uploadObserver = transferUtility.upload(BUCKET_NAME + "/streaming", fileName, file);
+        uploadObserver.setTransferListener(new TransferListener() {
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                Log.d(App.TAG, "onStateChanged: " + id + ", " + state.toString());
+                String streamingThumbnail = STREAMING_URL + fileName; // 스토리지에 저장 후 수정된 이미지 url
+                saveThumbnail(streamingThumbnail , roomID); // 찍은 스크린샷 저장 (리사이클러뷰에 뿌려주기 위함)
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
+                int percentDone = (int)percentDonef;
+                Log.d(App.TAG, "ID:" + id + " bytesCurrent: " + bytesCurrent + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                Log.e(App.TAG, ex.getMessage());
+            }
+        });
+    }
+
+    // DB 유저 프로필 수정 요청 (서버 통신)
+    @SuppressLint("SimpleDateFormat")
+    private void saveThumbnail(String uri, String roomID) {
+
+        mServiceApi.saveThumbnail(uri, roomID).enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+                Log.d(ACTIVITY_SERVICE, "Thumbnail 저장 성공 : " + result.getMessage());
+            }
+
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(StreamingActivity.this, "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
+    }
+
+    // =========================================================================================================
+
+
+
+
 }

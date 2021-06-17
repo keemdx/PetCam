@@ -71,6 +71,7 @@ public class App extends Application {
 
     // URI
     public static String USER_PROFILE_URL = "https://petcam.s3.ap-northeast-2.amazonaws.com/profile-image/";
+    public static String STREAMING_URL = "https://petcam.s3.ap-northeast-2.amazonaws.com/streaming/";
     /*-----------------------------------------------------------*/
 
     // 해당 액티비티에서 상단 상태바(Status bar) 컬러를 블랙으로 바꾼다.
