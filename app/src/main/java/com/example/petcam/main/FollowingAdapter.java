@@ -1,18 +1,28 @@
 package com.example.petcam.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.petcam.R;
+import com.example.petcam.chatting.ChatroomAdapter;
+import com.example.petcam.streaming.StreamingPlayerActivity;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.example.petcam.function.App.STREAMING_ROOM_ID;
 
 public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.ViewHolder> {
 
@@ -38,8 +48,23 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         FollowingItem item = mList.get(position);
-        holder.tv_name.setText(item.getName());
-        holder.iv_profile.setImageResource(item.getImage());
+
+        if (item.getStreamer_image() != null) {
+            // 유저 프로필 이미지 보여주기
+            Glide.with(mContext).load(item.getStreamer_image()).centerCrop().into(holder.iv_profile);
+        } else {
+            Glide.with(mContext).load(R.drawable.ic_user).centerCrop().into(holder.iv_profile);
+        }
+        holder.iv_profile.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, StreamingPlayerActivity.class);
+                intent.putExtra(STREAMING_ROOM_ID, item.getRoom_id());
+                mContext.startActivity(intent);
+            }
+        });
+
+
     }
 
     @Override
@@ -50,12 +75,10 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.View
 
     // 리사이클러뷰 홀더
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tv_name;
         public ImageView iv_profile;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.tv_name = itemView.findViewById(R.id.tv_name);
             this.iv_profile = itemView.findViewById(R.id.iv_profile);
         }
     }

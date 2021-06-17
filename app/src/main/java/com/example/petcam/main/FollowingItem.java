@@ -1,30 +1,25 @@
 package com.example.petcam.main;
 
+import com.google.gson.annotations.SerializedName;
+
 public class FollowingItem {
 
+    @SerializedName("streamer_image") private String streamer_image;
+    @SerializedName("room_id") private String room_id;
 
-    private String name;
-    private int image;
-
-
-    public FollowingItem(String name, int image) {
-        this.name = name;
-        this.image = image;
+    public String getStreamer_image() {
+        return streamer_image;
     }
 
-    public String getName() {
-        return name;
+    public void setStreamer_image(String streamer_image) {
+        this.streamer_image = streamer_image;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getRoom_id() {
+        return room_id;
     }
 
-    public int getImage() {
-        return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
+    public void setRoom_id(String room_id) {
+        this.room_id = room_id;
     }
 }

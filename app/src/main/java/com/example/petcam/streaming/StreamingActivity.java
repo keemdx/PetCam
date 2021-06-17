@@ -365,9 +365,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         String streamerID = userID; // 스트리머 UID
         String roomTitle = mRoomTitle.getText().toString(); // 룸 생성 시 입력한 타이틀
         String roomStatus = ON; // 현재 방송 상태
+        String createAt =  String.valueOf(System.currentTimeMillis());
         int viewer = 0; // 시청자 수 (1 이상일 경우만 표시)
 
-        mServiceApi.createStreamingRoom(roomID, streamerID, roomTitle, roomStatus, viewer).enqueue(new Callback<ResultModel>() {
+        mServiceApi.createStreamingRoom(roomID, streamerID, roomTitle, roomStatus, viewer, createAt).enqueue(new Callback<ResultModel>() {
             // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
             @Override
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {

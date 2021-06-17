@@ -3,6 +3,7 @@ package com.example.petcam.streaming;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +19,8 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import static com.example.petcam.function.App.ROOM_ID;
+import static com.example.petcam.function.App.STREAMING_ROOM_ID;
 import static com.example.petcam.function.App.makeStatusBarBlack;
 
 /**
@@ -32,6 +35,9 @@ public class StreamingPlayerActivity extends AppCompatActivity {
     private PlayerView mPlayerView;
     private SimpleExoPlayer player;
     private DefaultTrackSelector trackSelector;
+
+    // 스트리밍 방 관련
+    private String roomID;
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @SuppressLint("UseCompatLoadingForDrawables")
@@ -60,6 +66,12 @@ public class StreamingPlayerActivity extends AppCompatActivity {
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
         findViewById(R.id.iv_player_finish).setOnClickListener(onClickListener);
 
+        // 리사이클러뷰에서 받은 룸 아이디 가져오기
+        Intent intent = getIntent();
+        roomID = intent.getStringExtra(STREAMING_ROOM_ID);
+
+        // 현재 방 정보 가져오기
+
     }
 
     // =========================================================================================================
@@ -70,7 +82,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
         mPlayerView = (PlayerView) findViewById(R.id.view_streaming_player);
         mPlayerView.requestFocus();
 
-        Uri dashUri = Uri.parse("http://15.164.220.155/stream/dash/hello.mpd");
+        Uri dashUri = Uri.parse("http://15.164.220.155/stream/dash/" + roomID + ".mpd");
 
         // Create a data source factory.
         DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(); // HttpDataSource 는 인터넷 상의 mp3, mp4 파일 재생을 도와준다.

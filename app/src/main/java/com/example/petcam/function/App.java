@@ -64,6 +64,9 @@ public class App extends Application {
     public static String NOTIFI_ROOM_ID = "notifi_room_id"; // 알림 클릭 시 전달되는 채팅 방 번호 ID
     public static String USER_INVITE = "user_invite"; // 초대한 유저 닉네임
 
+    /** 스트리밍 **/
+    public static String STREAMING_ROOM_ID = "streaming_room_id"; // 채팅 방 번호 ID
+
     /*-------------------------- AWS S3 --------------------------*/
     public static String BUCKET_NAME = "petcam";
     public static String ACCESS_KEY = "xxxxxxxxxx";

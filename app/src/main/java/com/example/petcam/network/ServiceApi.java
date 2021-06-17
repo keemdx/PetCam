@@ -5,6 +5,8 @@ import com.example.petcam.chatting.ChatroomItem;
 import com.example.petcam.chatting.ChattingDataItem;
 import com.example.petcam.chatting.ChattingItem;
 import com.example.petcam.chatting.SearchUserItem;
+import com.example.petcam.main.FollowingItem;
+import com.example.petcam.main.PopularItem;
 import com.example.petcam.profile.FollowListItem;
 import com.example.petcam.profile.fanboard.FanboardItem;
 import com.example.petcam.profile.notice.FixTopNoticeItem;
@@ -306,16 +308,27 @@ public interface ServiceApi {
     @FormUrlEncoded
     @POST("streaming-room.php")
     Call<ResultModel> createStreamingRoom (@Field("roomID") String roomID,
-                                  @Field("streamerID") String streamerID,
-                                  @Field("roomTitle") String roomTitle,
-                                  @Field("roomStatus") String roomStatus,
-                                  @Field("viewer") int viewer);
+                                          @Field("streamerID") String streamerID,
+                                          @Field("roomTitle") String roomTitle,
+                                          @Field("roomStatus") String roomStatus,
+                                          @Field("viewer") int viewer,
+                                           @Field("createAt") String createAt);
 
     // 스트리밍 룸에 Thumbnail 전송 (방송 시작 후 캡쳐된 이미지)
     @FormUrlEncoded
     @POST("streaming-room.php")
     Call<ResultModel> saveThumbnail (@Field("uri") String uri,
                                   @Field("roomID") String roomID);
+
+    // 채팅 메시지 리스트 가져오기
+    @FormUrlEncoded
+    @POST("get-live-friends.php")
+    Call<List<FollowingItem>>getLiveNowFriends (@Field("userID") String userID);
+
+    // 채팅 메시지 리스트 가져오기
+    @FormUrlEncoded
+    @POST("get-live-rooms.php")
+    Call<List<PopularItem>>getHotLiveRooms(@Field("userID") String userID);
 
     // =========================================================================================================
 
