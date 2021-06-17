@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -22,51 +23,43 @@
 
             <ImageView
                 android:id="@+id/imageView19"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="20dp"
-                android:src="@drawable/pet_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName2" />
-
-            <EditText
-                android:id="@+id/editTextTextPersonName2"
-                android:layout_width="0dp"
+                android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/bg_gray_all_round_corner"
-                android:drawableRight="@drawable/ic_search"
-                android:ems="10"
-                android:hint="검색"
-                android:inputType="textPersonName"
-                android:paddingLeft="20dp"
-                android:paddingRight="16dp"
-                android:textSize="13sp"
+                android:src="@drawable/pet_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/iv_message"
-                app:layout_constraintStart_toEndOf="@+id/imageView19"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/iv_message"
-                android:layout_width="27dp"
-                android:layout_height="27dp"
-                android:layout_marginEnd="23dp"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName2"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="26dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView19"
+                app:layout_constraintEnd_toStartOf="@+id/iv_search"
+                app:layout_constraintTop_toTopOf="@+id/imageView19"
+                app:srcCompat="@drawable/ic_chat" />
+
+            <ImageView
+                android:id="@+id/iv_search"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_message"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName2"
-                app:srcCompat="@drawable/ic_chat"
-                app:tint="#959595" />
+                app:layout_constraintTop_toTopOf="@+id/imageView19"
+                app:srcCompat="@drawable/ic_search"
+                app:tint="#222" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="66dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,84 +68,159 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#F8F8F8">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_following"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clipToPadding="false"
+                android:paddingStart="16dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_popular2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="18dp"
-                android:fontFamily="@font/notosans_bold"
-                android:text="실시간 랭킹"
-                android:textColor="#000"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_following" />
-
-            <ImageView
-                android:id="@+id/imageView17"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/ic_arrow_right"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_popular2"
-                app:layout_constraintStart_toEndOf="@+id/tv_popular2"
-                app:layout_constraintTop_toTopOf="@+id/tv_popular2"
-                app:tint="#C5C5C5" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_popular"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout5"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_popular2" />
+                app:layout_constraintTop_toBottomOf="@+id/rv_following">
 
-            <TextView
-                android:id="@+id/tv_popular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:fontFamily="@font/notosans_bold"
-                android:text="라이브 Now"
-                android:textColor="#000"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_popular" />
+                <TextView
+                    android:id="@+id/tv_popular2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="22dp"
+                    android:fontFamily="sans-serif"
+                    android:text="HOT LIVE"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/imageView15"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/ic_arrow_right"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_popular"
-                app:layout_constraintStart_toEndOf="@+id/tv_popular"
-                app:layout_constraintTop_toTopOf="@+id/tv_popular"
-                app:tint="#C5C5C5" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_popular"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="14dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_popular2">
 
+                </androidx.recyclerview.widget.RecyclerView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_liveNow"
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout6"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_popular" />
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+
+                <TextView
+                    android:id="@+id/tv_popular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="sans-serif"
+                    android:text="DAILY CHARTS"
+                    android:textColor="#000"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:scrollbarSize="0dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    app:layout_constraintStart_toStartOf="@+id/tv_popular"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_popular">
+
+
+                    <RadioGroup
+                        android:id="@+id/rc_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rb_videos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rb_rc_selector"
+                            android:button="@android:color/transparent"
+                            android:checked="true"
+                            android:gravity="center"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:text="VIDEOS"
+                            android:textColor="@drawable/rb_rc_text"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <RadioButton
+                            android:id="@+id/rb_channels"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_marginLeft="3dp"
+                            android:layout_marginRight="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rb_rc_selector"
+                            android:button="@android:color/transparent"
+                            android:checked="false"
+                            android:gravity="center"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:text="CHANNELS"
+                            android:textColor="@drawable/rb_rc_text"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </RadioGroup>
+                </HorizontalScrollView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_charts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
