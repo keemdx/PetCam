@@ -101,6 +101,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     public static String ON = "ON";
     public static String OFF = "OFF";
 
+    // 방송 녹화 관련 (LIVE TO VOD)
+    private File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/VOD"); // VOD 저장할 경로 설정
+    private String timeStamp;
+
     private ServiceApi mServiceApi;
     private SharedPreferences pref;
 
@@ -214,6 +218,12 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
                 if (rtmpCamera1.prepareAudio() && rtmpCamera1.prepareVideo()) { // 비디오, 오디오 값이 null 이 아니라면 스트리밍을 시작한다.
                     rtmpCamera1.startStream("rtmp://15.164.220.155/live/" + roomID); // 라이브 스트리밍 고유 주소
+                    try {
+                        Thread.sleep(3000);
+                        startRecord();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Error preparing stream, This device cant do it", Toast.LENGTH_SHORT).show();
                 }
@@ -257,6 +267,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 Log.d(ACTIVITY_SERVICE, "RTMP Connection Failed");
                 rtmpCamera1.stopStream();
                 rtmpCamera1.stopPreview();
+                stopRecord();
             }
         });
     }
@@ -305,6 +316,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             @Override
             public void run() {
                 Toast.makeText(getApplicationContext(), "Disconnected", Toast.LENGTH_LONG).show();
+
+                stopRecord();
+
                 if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
                     rtmpCamera1.stopStream();
                     rtmpCamera1.stopPreview();
@@ -330,6 +344,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     @Override
     protected void onStop() {
         super.onStop();
+
+        stopRecord();
+
         if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
             rtmpCamera1.stopStream();
             rtmpCamera1.stopPreview();
@@ -351,6 +368,42 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
         rtmpCamera1.stopPreview();
+    }
+
+    // =========================================================================================================
+
+    // 녹화를 시작한다. (VOD)
+    public void startRecord() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            if (!rtmpCamera1.isRecording()) { // 레코딩 중이 아니라면, 폴더 생성해서 vod를 저장한다.
+                try {
+                    // 폴더가 없다면 생성한다.
+                    if (!folder.exists()) {
+                        folder.mkdir();
+                    }
+
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yy" + "MM" + "dd" + "HH" + "mm" + "ss");
+                    timeStamp = format.format(new Date());
+                    rtmpCamera1.startRecord(folder.getAbsolutePath() + "/" + format + ".mp4");
+
+                } catch (IOException e) {
+                    rtmpCamera1.stopRecord();
+                    Log.d(ACTIVITY_SERVICE, "Stop Recording");
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            } else { // 레코딩 중이라면 녹화를 중단한다.
+                stopRecord();
+            }
+        } else {
+            Toast.makeText(this, "You need min JELLY_BEAN_MR2(API 18) for do it...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void stopRecord() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && rtmpCamera1.isRecording()) {
+            rtmpCamera1.stopRecord(); // 녹화를 중단한다.
+            timeStamp = "";
+        }
     }
 
     // =========================================================================================================
