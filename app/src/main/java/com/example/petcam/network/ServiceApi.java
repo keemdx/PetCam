@@ -336,6 +336,17 @@ public interface ServiceApi {
     Call<ResultModel> saveRoomStatus (@Field("roomID") String roomID,
                                       @Field("status") String status);
 
+    // 현재 viewer 수 가져오기
+    @FormUrlEncoded
+    @POST("get-viewer-count.php")
+    Call<ResultModel> getViewerCount (@Field("roomID") String roomID);
+
+    // viewer 저장하기
+    @FormUrlEncoded
+    @POST("set-viewer-count.php")
+    Call<ResultModel> setViewerCount (@Field("viewerStatus") String viewerStatus,
+                                      @Field("roomID") String roomID);
+
     // =========================================================================================================
 
 }

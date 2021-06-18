@@ -87,7 +87,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     private RtmpCamera1 rtmpCamera1;
     private Animation mAnimation;
     private ImageView mMic;
-    private TextView mCount;
+    private TextView mCount, mViewerCount;
     private ConstraintLayout mLayoutStreamingIcon;
     private LinearLayout mLayoutBeforeStreaming;
     private AppBarLayout mLayoutStreamingChat;
@@ -187,6 +187,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
         // 스트리밍 관련 UI 선언
         mMic = (ImageView) findViewById(R.id.iv_mic);
+        mViewerCount = (TextView) findViewById(R.id.tv_viewer_count);
         mCount = (TextView) findViewById(R.id.tv_count);
         mLayoutStreamingIcon = (ConstraintLayout) findViewById(R.id.layout_start_streaming);
         mLayoutStreamingChat = (AppBarLayout) findViewById(R.id.bottom_start_streaming);
@@ -253,7 +254,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Connection Failed", Toast.LENGTH_LONG).show();
+                Log.d(ACTIVITY_SERVICE, "RTMP Connection Failed");
                 rtmpCamera1.stopStream();
                 rtmpCamera1.stopPreview();
             }
@@ -265,8 +266,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Connection Started", Toast.LENGTH_LONG).show();
-
+                Log.d(ACTIVITY_SERVICE, "RTMP Connection Started");
             }
         });
     }
@@ -276,7 +276,25 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Connection Success", Toast.LENGTH_LONG).show();
+                Log.d(ACTIVITY_SERVICE, "RTMP Connection Success");
+                // RTMP 커넥션 연결에 성공하면 1분에 한번씩 썸네일을 저장해 준다. (실시간 반영)
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (!Thread.interrupted())
+                            try {
+                                Thread.sleep(1000); // 1분에 한번씩 썸네일 변경해 주기
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getViewerCount(roomID);
+                                    }
+                                });
+                            } catch (InterruptedException e) {
+                                // error
+                            }
+                    }
+                }).start();
             }
         });
     }
@@ -287,6 +305,12 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             @Override
             public void run() {
                 Toast.makeText(getApplicationContext(), "Disconnected", Toast.LENGTH_LONG).show();
+                if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
+                    rtmpCamera1.stopStream();
+                    rtmpCamera1.stopPreview();
+                }
+                saveRoomStatus(roomID);
+                finish(); // 액티비티 종료
             }
         });
     }
@@ -470,7 +494,6 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 if (rtmpCamera1.isStreaming()) {
                     screenShot(); // 현재 화면 스크린샷!
                 }
-
             }
         };
     }
@@ -571,6 +594,29 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     }
 
     // =========================================================================================================
+
+    // 서버에서 현재 viewer 수 가져오기
+    @SuppressLint("SimpleDateFormat")
+    private void getViewerCount(String roomID) {
+
+        mServiceApi.getViewerCount(roomID).enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+                mViewerCount.setText(result.getMessage());
+
+            }
+
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(StreamingActivity.this, "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
+    }
 
 
 
