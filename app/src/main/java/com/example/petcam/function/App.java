@@ -66,6 +66,7 @@ public class App extends Application {
 
     /** 스트리밍 **/
     public static String STREAMING_ROOM_ID = "streaming_room_id"; // 채팅 방 번호 ID
+    public static String BROADCAST_LIVE_MSG = "broadcast_live_message"; // 브로드캐스트 보내는 메시지
 
     /*-------------------------- AWS S3 --------------------------*/
     public static String BUCKET_NAME = "petcam";

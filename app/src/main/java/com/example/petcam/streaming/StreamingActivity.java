@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -18,6 +19,8 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.PixelCopy;
 import android.view.SurfaceHolder;
@@ -44,7 +47,6 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.example.petcam.R;
-import com.example.petcam.function.App;
 import com.example.petcam.network.ResultModel;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
@@ -54,12 +56,15 @@ import com.pedro.rtmp.utils.ConnectCheckerRtmp;
 import com.pedro.rtplibrary.rtmp.RtmpCamera1;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,10 +72,13 @@ import retrofit2.Response;
 
 import static com.example.petcam.function.App.ACCESS_KEY;
 import static com.example.petcam.function.App.BUCKET_NAME;
+import static com.example.petcam.function.App.CHAT_DATA;
 import static com.example.petcam.function.App.LOGIN_STATUS;
-import static com.example.petcam.function.App.ROOM_ID;
 import static com.example.petcam.function.App.SECRET_KEY;
 import static com.example.petcam.function.App.STREAMING_URL;
+import static com.example.petcam.function.App.TAG;
+import static com.example.petcam.function.App.USER_IMAGE;
+import static com.example.petcam.function.App.USER_NAME;
 import static com.example.petcam.function.App.USER_UID;
 import static com.example.petcam.function.App.makeStatusBarBlack;
 
@@ -93,8 +101,12 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     private AppBarLayout mLayoutStreamingChat;
     private Button mStreamingStartButton;
 
+    // 채팅 관련
+    private EditText mEditMessage;
+    private TextView mSend;
+
     // 방 정보 관련
-    private String roomID, userID;
+    private String roomID, userID, userPhoto, userName;
     private EditText mRoomTitle;
 
     // 방 정보 관련 (Status)
@@ -116,7 +128,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
-        @SuppressLint("UseCompatLoadingForDrawables")
+        @SuppressLint({"UseCompatLoadingForDrawables", "NonConstantResourceId"})
         @Override
         public void onClick(View view) {
 
@@ -161,6 +173,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                     }
                     break;
 
+                case R.id.tv_send_chat: // 채팅 보내기 버튼
+                    sendMessage();
+                    break;
             }
         }
     };
@@ -182,12 +197,15 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         // 저장된 유저 정보 가져오기
         pref = getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
         userID = pref.getString(USER_UID, ""); // 유저 프로필 아이디
+        userPhoto = pref.getString(USER_IMAGE,""); // 유저 프로필 이미지
+        userName = pref.getString(USER_NAME,""); // 유저 닉네임
 
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
         findViewById(R.id.iv_finish).setOnClickListener(onClickListener);
         findViewById(R.id.iv_switch_camera).setOnClickListener(onClickListener);
         findViewById(R.id.iv_mic).setOnClickListener(onClickListener);
         findViewById(R.id.btn_start_streaming).setOnClickListener(onClickListener);
+        findViewById(R.id.tv_send_chat).setOnClickListener(onClickListener);
 
         // 스트리밍 관련 UI 선언
         mMic = (ImageView) findViewById(R.id.iv_mic);
@@ -204,6 +222,31 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         mSurfaceView.setBackgroundColor(Color.TRANSPARENT);
         mSurfaceView.getHolder().addCallback(this);
         rtmpCamera1 = new RtmpCamera1(mSurfaceView, this);
+
+        // 채팅 관련 UI 선언
+        mEditMessage = (EditText) findViewById(R.id.et_send_message);
+        mSend = (TextView) findViewById(R.id.tv_send_chat);
+        mEditMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                if(mEditMessage.isFocused()) {
+                    if(s.length() > 0) { // 메시지 전송 가능한 상태
+                        mSend.setText("전송");
+                        mSend.setClickable(true);
+                    } else {
+                        mSend.setText("···");
+                        mSend.setClickable(false);
+                    }
+                }
+            }
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
 
     }
     // =========================================================================================================
@@ -534,7 +577,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                         } catch (Throwable t) {
 
                         }
-                        mCount.setVisibility(View.GONE);
+                        if(mCount.getVisibility() == View.VISIBLE) {
+                            mCount.setVisibility(View.GONE);
+                        }
                     }
                 });
                 startFadeOut.start();
@@ -547,6 +592,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 if (rtmpCamera1.isStreaming()) {
                     screenShot(); // 현재 화면 스크린샷!
                 }
+                // Service 시작! (background)
+                Intent intent = new Intent(StreamingActivity.this, LiveChatService.class);
+                startService(intent);
             }
         };
     }
@@ -605,7 +653,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         uploadObserver.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
-                Log.d(App.TAG, "onStateChanged: " + id + ", " + state.toString());
+                Log.d(TAG, "onStateChanged: " + id + ", " + state.toString());
                 String streamingThumbnail = STREAMING_URL + fileName; // 스토리지에 저장 후 수정된 이미지 url
                 saveThumbnail(streamingThumbnail , roomID); // 찍은 스크린샷 저장 (리사이클러뷰에 뿌려주기 위함)
             }
@@ -614,12 +662,12 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                 float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
                 int percentDone = (int)percentDonef;
-                Log.d(App.TAG, "ID:" + id + " bytesCurrent: " + bytesCurrent + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+                Log.d(TAG, "ID:" + id + " bytesCurrent: " + bytesCurrent + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
             }
 
             @Override
             public void onError(int id, Exception ex) {
-                Log.e(App.TAG, ex.getMessage());
+                Log.e(TAG, ex.getMessage());
             }
         });
     }
@@ -645,6 +693,41 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             }
         });
     }
+
+    // =========================================================================================================
+
+    // 메시지를 보내는 곳
+    private void sendMessage() {
+        String message = mEditMessage.getText().toString();
+
+        // 서버에 메시지를 보낸다. (JSON)
+        try {
+
+            JSONObject object = new JSONObject();
+            object.put("message_type", "message");
+            object.put("room_id", roomID);
+            object.put("id", userID);
+            object.put("name", userName);
+            object.put("profile", userPhoto);
+            object.put("message", message);
+
+            String msg_data = object.toString(); // 보낼 데이터 (메시지 정보)
+
+            Log.d(TAG, "MESSAGE : " + message);
+            Log.d(TAG, "ROOM ID : " + roomID);
+            Log.d(TAG, "ID : " + userID);
+            Log.d(TAG, "NAME : " + userName);
+            Log.d(TAG, "IMG : " + userPhoto);
+
+            Intent intent = new Intent(StreamingActivity.this, LiveChatService.class); // 액티비티 ㅡ> 서비스로 메세지 전달
+            intent.putExtra(CHAT_DATA, msg_data);
+            startService(intent);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     // =========================================================================================================
 

@@ -77,11 +77,16 @@ dependencies {
 
     // RTMP 패킷 전송
     implementation 'com.github.pedroSG94.rtmp-rtsp-stream-client-java:rtplibrary:2.0.5'
+
     // full exoplayer library
-    implementation 'com.google.android.exoplayer:exoplayer:2.14.0'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.14.0'
-    implementation 'com.google.android.exoplayer:exoplayer-dash:2.14.0'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.14.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.14.1'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.14.1'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.14.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.14.1'
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    implementation group: 'io.netty', name: 'netty-all', version: '5.0.0.Alpha2'
+
 
 }

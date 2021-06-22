@@ -209,14 +209,14 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
 
                 <EditText
                     android:id="@+id/et_send_message"
                     android:layout_width="0dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="14dp"
                     android:background="@drawable/bg_gray_stroke_corner"
                     android:ems="10"
                     android:hint="댓글 달기"
@@ -229,7 +229,7 @@
                     android:textColorHint="@color/white"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/iv_invite"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -243,6 +243,7 @@
                     android:layout_alignBottom="@+id/et_send_message"
                     android:layout_alignParentRight="true"
                     android:layout_marginEnd="20dp"
+                    android:clickable="false"
                     android:text="···"
                     android:textColor="@color/white"
                     android:textSize="13sp"
@@ -251,18 +252,6 @@
                     app:layout_constraintEnd_toEndOf="@+id/et_send_message"
                     app:layout_constraintTop_toTopOf="@+id/et_send_message" />
 
-                <ImageView
-                    android:id="@+id/iv_invite"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="4dp"
-                    android:foregroundGravity="center"
-                    app:layout_constraintBottom_toBottomOf="@+id/et_send_message"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/et_send_message"
-                    app:srcCompat="@drawable/ic_baseline_person_add_alt_1_24"
-                    app:tint="@color/white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
