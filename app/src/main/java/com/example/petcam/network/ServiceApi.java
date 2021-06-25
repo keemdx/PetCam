@@ -347,6 +347,14 @@ public interface ServiceApi {
     Call<ResultModel> setViewerCount (@Field("viewerStatus") String viewerStatus,
                                       @Field("roomID") String roomID);
 
+    // 채팅 저장
+    @FormUrlEncoded
+    @POST("save-live-chat.php")
+    Call<ResultModel> saveLiveChat (@Field("roomID") String roomID,
+                                    @Field("userID") String userID,
+                                    @Field("message") String message,
+                                    @Field("time") String time);
+
     // =========================================================================================================
 
 }

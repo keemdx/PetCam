@@ -3,12 +3,17 @@ package com.example.petcam.streaming;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -22,6 +27,7 @@ import android.os.HandlerThread;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.PixelCopy;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -63,7 +69,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -71,6 +79,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.example.petcam.function.App.ACCESS_KEY;
+import static com.example.petcam.function.App.BROADCAST_LIVE_MSG;
 import static com.example.petcam.function.App.BUCKET_NAME;
 import static com.example.petcam.function.App.CHAT_DATA;
 import static com.example.petcam.function.App.LOGIN_STATUS;
@@ -102,8 +111,15 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     private Button mStreamingStartButton;
 
     // 채팅 관련
+    private LiveChatAdapter adapter;
+    private List<LiveChatItem> mLiveChatList;
+    private RecyclerView mLiveChatRV;
     private EditText mEditMessage;
     private TextView mSend;
+
+    // 브로드 캐스트 리시버 동적 생성(매니페스트 intent filter 추가 안하고)
+    BroadcastReceiver broadcastReceiver; // 서비스로부터 메세지를 받기 위해 브로드 캐스트 리시버 동적 생성
+    IntentFilter intentfilter;
 
     // 방 정보 관련
     private String roomID, userID, userPhoto, userName;
@@ -180,6 +196,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         }
     };
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,6 +210,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
         // 서버와의 연결을 위한 ServiceApi 객체를 생성한다.
         mServiceApi = RetrofitClient.getClient().create(ServiceApi.class);
+
+        // 브로드 캐스트 관련
+        intentfilter = new IntentFilter(); // 인텐트 필터 생성
+        intentfilter.addAction(BROADCAST_LIVE_MSG); // 인텐트 필터에 액션 추가
 
         // 저장된 유저 정보 가져오기
         pref = getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
@@ -224,6 +245,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         rtmpCamera1 = new RtmpCamera1(mSurfaceView, this);
 
         // 채팅 관련 UI 선언
+        mLiveChatRV = (RecyclerView) findViewById(R.id.rv_live_chat_streamer);
         mEditMessage = (EditText) findViewById(R.id.et_send_message);
         mSend = (TextView) findViewById(R.id.tv_send_chat);
         mEditMessage.addTextChangedListener(new TextWatcher() {
@@ -247,6 +269,22 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             public void afterTextChanged(Editable editable) {
             }
         });
+
+        // EditText 부분을 클릭했을 경우 클릭 이벤트
+        mEditMessage.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                // 가장 최근 메시지 보여주기
+                focusCurrentMessage();
+                return false;
+            }
+        });
+
+        // 채팅을 위한 RecyclerView
+        mLiveChatList = new ArrayList<>();
+        mLiveChatRV.setHasFixedSize(true);
+        mLiveChatRV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        adapter = new LiveChatAdapter(mLiveChatList, StreamingActivity.this);
+        mLiveChatRV.setAdapter(adapter);
 
     }
     // =========================================================================================================
@@ -358,9 +396,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Disconnected", Toast.LENGTH_LONG).show();
+                Log.d(ACTIVITY_SERVICE, "Disconnected");
 
-                stopRecord();
+                stopRecord(); // 녹화 시작
 
                 if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
                     rtmpCamera1.stopStream();
@@ -588,13 +626,17 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 mStreamingStartButton.setVisibility(View.GONE);
                 mLayoutStreamingIcon.setVisibility(View.VISIBLE);
                 mLayoutStreamingChat.setVisibility(View.VISIBLE);
+                mLiveChatRV.setVisibility(View.VISIBLE);
 
                 if (rtmpCamera1.isStreaming()) {
                     screenShot(); // 현재 화면 스크린샷!
                 }
+
                 // Service 시작! (background)
                 Intent intent = new Intent(StreamingActivity.this, LiveChatService.class);
                 startService(intent);
+
+                broadcastReceiver(); // 리시버 등록하는 함수 작동
             }
         };
     }
@@ -700,11 +742,17 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     private void sendMessage() {
         String message = mEditMessage.getText().toString();
 
+        // 채팅 RecyclerView 에 내가 보낸 메시지 추가
+        mLiveChatList.add(new LiveChatItem(userID, userName, userPhoto, message));
+        adapter = new LiveChatAdapter(mLiveChatList, StreamingActivity.this);
+        mLiveChatRV.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        focusCurrentMessage(); // 최신 메시지 보여주기
+
         // 서버에 메시지를 보낸다. (JSON)
         try {
-
             JSONObject object = new JSONObject();
-            object.put("message_type", "message");
+            object.put("type", "message");
             object.put("room_id", roomID);
             object.put("id", userID);
             object.put("name", userName);
@@ -723,11 +771,75 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             intent.putExtra(CHAT_DATA, msg_data);
             startService(intent);
 
+            saveLiveChat(roomID, userID, message); // 채팅 내용 DB 저장
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+
+    // =========================================================================================================
+
+    // 채팅 내용 저장 (DB)
+    @SuppressLint("SimpleDateFormat")
+    private void saveLiveChat(String roomID, String userID, String message) {
+
+        long now = System.currentTimeMillis();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA);
+        String sendTime = simpleDateFormat.format(new Date(now));
+
+        mServiceApi.saveLiveChat(roomID, userID, message, sendTime).enqueue(new Callback<ResultModel>() {
+            // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
+            @Override
+            public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
+                // 정상적으로 네트워크 통신 완료
+                ResultModel result = response.body();
+                if(result.getResult().equals("success")) {
+                    Log.d(ACTIVITY_SERVICE, "채팅 저장 성공 : " + result.getMessage());
+                }
+            }
+
+            // 통신이 실패했을 경우 호출된다.
+            @Override
+            public void onFailure(Call<ResultModel> call, Throwable t) {
+                Toast.makeText(StreamingActivity.this, "에러 발생", Toast.LENGTH_SHORT).show();
+                Log.e("에러 발생", t.getMessage());
+            }
+        });
+    }
+
+    // =========================================================================================================
+
+    // 동적 리시버 생성 -> 브로드 캐스트 메시지를 받아온다.
+    private void broadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String type = intent.getStringExtra("type");
+                String room_id = intent.getStringExtra("room_id");
+
+                // 일반적인 메세지를 받았을 때 실행한다.
+                if (type.equals("message") && room_id.equals(roomID)) {
+                    Log.d(TAG, "message 작동");
+
+                    String sender_id = String.valueOf(intent.getIntExtra("id", 1));
+                    String sender_name = intent.getStringExtra("name");
+                    String sender_profile = intent.getStringExtra("profile");
+                    String sender_message = intent.getStringExtra("message");
+
+                    // 받아온 메시지 데이터를 RecyclerView 에 추가한다.
+                    mLiveChatList.add(new LiveChatItem(sender_id, sender_name, sender_profile, sender_message));
+                    adapter = new LiveChatAdapter(mLiveChatList, StreamingActivity.this);
+                    mLiveChatRV.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    focusCurrentMessage(); // 최신 메시지 보여주기
+                    }
+                }
+        };
+        registerReceiver(broadcastReceiver, intentfilter);
+        Log.d(TAG, "broadcast receiver 를 시작합니다.");
+    }
 
     // =========================================================================================================
 
@@ -754,7 +866,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         });
     }
 
+    // ==========================================================================================================
 
-
-
+    // 마지막 RecyclerView 에 포커싱 (최신 메시지 보여주기)
+    public void focusCurrentMessage() {
+            mLiveChatRV.scrollToPosition(adapter.getItemCount() - 1);
+    }
 }

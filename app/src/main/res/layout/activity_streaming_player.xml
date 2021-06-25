@@ -68,14 +68,21 @@
                 app:layout_constraintTop_toTopOf="@+id/badge_live3"
                 app:srcCompat="@drawable/ic_profile"
                 app:tint="@color/white" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.exoplayer2.ui.PlayerView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_live_chat_streamer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="0dp"
+        android:layout_above="@+id/appBarLayout"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="200dp"
+        android:fadingEdgeLength="180dp"
+        android:requiresFadingEdge="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/appBarLayout"
+        tools:listitem="@layout/item_live_chat" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"

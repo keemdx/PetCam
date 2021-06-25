@@ -98,7 +98,7 @@ public class LiveChatService extends Service {
                 socketChannel
                         .socket()
                         .getOutputStream()
-                        .write(strings[0].getBytes("EUC-KR")); // 서버로 전달
+                        .write(strings[0].getBytes("UTF-8")); // 서버로 전달
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -114,43 +114,50 @@ public class LiveChatService extends Service {
 
         public void run(){
             while(true){
-                ByteBuffer byteBuffer = ByteBuffer.allocate(256);
+                ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                 try {
                     int readByteCount = socketChannel.read(byteBuffer);
                     if(readByteCount==-1){
                         throw new IOException();
                     }
                     byteBuffer.flip();
-                    Charset charset = Charset.forName("EUC-KR");
-                    JSONObject jsonObject = new JSONObject(charset.decode(byteBuffer).toString());
-                    String message_type = jsonObject.getString("message_type"); // 메시지 분류를 위한 messageType
+                    Charset charset = Charset.forName("UTF-8");
+                    String receiveData = charset.decode(byteBuffer).toString();
+                    JSONObject jsonObject = new JSONObject(new String(receiveData)); // 받아온 String 을 JSONObject 로 저장
+                    String type = jsonObject.getString("type"); // 메시지 분류를 위한 Type 가져오기
 
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-
                             // 메시지 타입에 따라 처리 (message, streaming_finish)
-                            switch (message_type) {
+                            switch (type) {
 
-                                // 메시지를 받았을 때 실행한다.
+                                // 기본적인 메시지를 받았을 때 실행한다.
                                 case "message":
-                                    Log.d(TAG, "[Service] type : message");
-                                    try{
+
+                                    try {
                                         String room_id = jsonObject.getString("room_id");
                                         int sender_id = jsonObject.getInt("id");
                                         String sender_name = jsonObject.getString("name");
                                         String sender_profile = jsonObject.getString("profile");
                                         String sender_message = jsonObject.getString("message");
 
+                                        Log.d(TAG, "[Service] room_id : " + room_id);
+                                        Log.d(TAG, "[Service] sender_id : " + sender_id);
+                                        Log.d(TAG, "[Service] sender_name : " + sender_name);
+                                        Log.d(TAG, "[Service] sender_profile : " + sender_profile);
+                                        Log.d(TAG, "[Service] sender_message : " + sender_message);
+
                                         Intent messageIntent = new Intent(BROADCAST_LIVE_MSG);
-                                        messageIntent.putExtra("message_type", "message");
+                                        messageIntent.putExtra("type", "message");
                                         messageIntent.putExtra("room_id", room_id); // 방번호
                                         messageIntent.putExtra("id", sender_id); // uid
                                         messageIntent.putExtra("name", sender_name); // 닉네임
                                         messageIntent.putExtra("profile", sender_profile); // 프로필 사진
                                         messageIntent.putExtra("message", sender_message); // 메시지 내용
                                         sendBroadcast(messageIntent);
-                                    } catch (Exception ignored){
+
+                                    } catch (Exception ignored) {
 
                                     }
                                     break;
@@ -159,9 +166,9 @@ public class LiveChatService extends Service {
                                 case "streaming_finish":
                                     Log.d(TAG, "[Service] type : streaming finish");
 
-                                    // 방송 종료 알림 보내기 (PlayerStreaming_Activity)로 보낸다.
+                                    // 방송 종료 알림 보내기 (StreamingPlayerActivity)로 보낸다.
                                     Intent streamingIntent = new Intent(BROADCAST_LIVE_MSG);
-                                    streamingIntent.putExtra("message_type", "live_off");
+                                    streamingIntent.putExtra("type", "liveOff");
                                     sendBroadcast(streamingIntent);
 
                                     break;
