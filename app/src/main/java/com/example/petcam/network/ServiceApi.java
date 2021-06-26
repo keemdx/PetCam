@@ -13,6 +13,7 @@ import com.example.petcam.profile.notice.FixTopNoticeItem;
 import com.example.petcam.profile.notice.NoticeCommentItem;
 import com.example.petcam.profile.notice.NoticeContents;
 import com.example.petcam.profile.notice.NoticeItem;
+import com.example.petcam.streaming.ViewersItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -345,7 +346,13 @@ public interface ServiceApi {
     @FormUrlEncoded
     @POST("set-viewer-count.php")
     Call<ResultModel> setViewerCount (@Field("viewerStatus") String viewerStatus,
-                                      @Field("roomID") String roomID);
+                                      @Field("roomID") String roomID,
+                                      @Field("viewer") String userID);
+
+    // 라이브 종료 시 보여줄 시청자 프로필 사진, 룸 thumbnail 가져오기
+    @FormUrlEncoded
+    @POST("get-live-result.php")
+    Call<List<ViewersItem>> getLiveResult (@Field("roomID") String roomID);
 
     // 채팅 저장
     @FormUrlEncoded

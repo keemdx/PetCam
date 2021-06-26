@@ -20,6 +20,7 @@
             android:id="@+id/tv_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="70dp"
             android:gravity="center"
             android:text="Start!"
             android:textColor="#FFFFFF"
@@ -28,6 +29,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -84,7 +86,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="70dp"
             android:background="@drawable/btn_round_corner"
             android:drawableLeft="@drawable/ic_live"
             android:gravity="center"
@@ -164,8 +166,8 @@
                     android:textSize="13sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_live_time"
+                <Chronometer
+                    android:id="@+id/chronometer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"

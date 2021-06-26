@@ -73,13 +73,15 @@ public class LiveChatService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.d(TAG, "[onStartCommand()] Start . . .");
-        String command = intent.getStringExtra(CHAT_DATA); // StreamingActivity 에서 받아온 intent (message)
+        if(intent != null) {
+            String command = intent.getStringExtra(CHAT_DATA); // StreamingActivity 에서 받아온 intent (message)
 
-        if (command == null) {
-            return Service.START_STICKY;
-        } else {
-            Log.d(TAG, "Send message : " + command);
-            new SendmsgTask().execute(command); // message 서버로 전송
+            if (command == null) {
+                return Service.START_STICKY;
+            } else {
+                Log.d(TAG, "Send message : " + command);
+                new SendmsgTask().execute(command); // message 서버로 전송
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -163,14 +165,20 @@ public class LiveChatService extends Service {
                                     break;
 
                                 // 영상 스트리밍 방송 종료시 실행한다.
-                                case "streaming_finish":
-                                    Log.d(TAG, "[Service] type : streaming finish");
+                                case "liveOff":
+                                    Log.d(TAG, "[Service] type : liveOff");
 
-                                    // 방송 종료 알림 보내기 (StreamingPlayerActivity)로 보낸다.
-                                    Intent streamingIntent = new Intent(BROADCAST_LIVE_MSG);
-                                    streamingIntent.putExtra("type", "liveOff");
-                                    sendBroadcast(streamingIntent);
+                                    try {
+                                        String room_id = jsonObject.getString("room_id");
 
+                                        // 방송 종료 알림 보내기 (StreamingPlayerActivity)로 보낸다.
+                                        Intent streamingIntent = new Intent(BROADCAST_LIVE_MSG);
+                                        streamingIntent.putExtra("type", "liveOff");
+                                        streamingIntent.putExtra("room_id", room_id); // 방번호
+                                        sendBroadcast(streamingIntent);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                     break;
                             }
                         }

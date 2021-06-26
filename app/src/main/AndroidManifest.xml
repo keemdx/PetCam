@@ -61,9 +61,12 @@
         <activity android:name=".access.LoginActivity" />
         <activity android:name=".access.ForgotPasswordActivity" />
         <activity android:name=".profile.SettingsActivity" />
-        <activity android:name=".profile.EditProfileActivity" /> <!-- Streaming Activity -->
+        <activity android:name=".profile.EditProfileActivity" />
+        <!-- Streaming Activity -->
         <activity android:name=".streaming.StreamingActivity" />
         <activity android:name=".streaming.StreamingPlayerActivity" />
+        <activity android:name=".streaming.StreamingFinishActivity" />
+        <activity android:name=".streaming.StreamingResultActivity" />
 
         <service
             android:name=".streaming.LiveChatService"

@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,6 +85,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
     private TextView mViewerCount;
 
     // 채팅 관련
+    private InputMethodManager input;
     private LiveChatAdapter adapter;
     private List<LiveChatItem> mLiveChatList;
     private RecyclerView mLiveChatRV;
@@ -126,6 +128,9 @@ public class StreamingPlayerActivity extends AppCompatActivity {
 
         // 서버와의 연결을 위한 ServiceApi 객체를 생성한다.
         mServiceApi = RetrofitClient.getClient().create(ServiceApi.class);
+
+        // 키보드 관련
+        input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // 저장된 유저 정보 가져오기
         pref = getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
@@ -244,6 +249,13 @@ public class StreamingPlayerActivity extends AppCompatActivity {
                     mLiveChatRV.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     focusCurrentMessage(); // 최신 메시지 보여주기
+
+                    // 라이브 스트리밍 종료 시 실행한다. (종료 페이지)
+                } else if (type.equals("liveOff") && room_id.equals(roomID)) {
+                    Intent finishIntent =new Intent(getApplicationContext(), StreamingFinishActivity.class);
+                    finishIntent.putExtra(STREAMING_ROOM_ID, roomID);
+                    startActivity(finishIntent);
+                    finish();
                 }
             }
         };
@@ -253,9 +265,22 @@ public class StreamingPlayerActivity extends AppCompatActivity {
 
     // =========================================================================================================
 
+    // 브로드 캐스트 종료
+    private void broadcastReceiverEnd() {
+        if (broadcastReceiver != null) {
+            this.unregisterReceiver(broadcastReceiver);
+            broadcastReceiver = null;
+            Log.d(TAG, "broadcast receiver 를 종료합니다.");
+        }
+    }
+    // =========================================================================================================
+
     // 메시지를 보내는 곳
     private void sendMessage() {
         String message = mEditMessage.getText().toString();
+
+        mEditMessage.setText("");
+        input.hideSoftInputFromWindow(mEditMessage.getWindowToken(), 0);
 
         // 채팅 RecyclerView 에 내가 보낸 메시지 추가
         mLiveChatList.add(new LiveChatItem(userID, userName, userPhoto, message));
@@ -393,6 +418,8 @@ public class StreamingPlayerActivity extends AppCompatActivity {
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
+        // 브로드캐스트 종료하기
+        broadcastReceiverEnd();
         // 유저 수 -1 해서 저장하기
         setViewerCount("END", roomID);
     }
@@ -403,7 +430,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
     @SuppressLint("SimpleDateFormat")
     private void setViewerCount(String viewerStatus, String roomID) {
 
-        mServiceApi.setViewerCount(viewerStatus, roomID).enqueue(new Callback<ResultModel>() {
+        mServiceApi.setViewerCount(viewerStatus, roomID, userID).enqueue(new Callback<ResultModel>() {
             // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
             @Override
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {

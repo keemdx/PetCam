@@ -24,6 +24,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,7 +36,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -84,6 +87,7 @@ import static com.example.petcam.function.App.BUCKET_NAME;
 import static com.example.petcam.function.App.CHAT_DATA;
 import static com.example.petcam.function.App.LOGIN_STATUS;
 import static com.example.petcam.function.App.SECRET_KEY;
+import static com.example.petcam.function.App.STREAMING_ROOM_ID;
 import static com.example.petcam.function.App.STREAMING_URL;
 import static com.example.petcam.function.App.TAG;
 import static com.example.petcam.function.App.USER_IMAGE;
@@ -111,6 +115,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     private Button mStreamingStartButton;
 
     // 채팅 관련
+    private InputMethodManager input;
     private LiveChatAdapter adapter;
     private List<LiveChatItem> mLiveChatList;
     private RecyclerView mLiveChatRV;
@@ -135,6 +140,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
     private ServiceApi mServiceApi;
     private SharedPreferences pref;
+
+    // 방송 시간 체크를 위한 Chronometer
+    Chronometer chronometer;
+    String liveTime;
 
     // 방송 시작 전 카운트 다운을 위한 용도
     int count = 3;
@@ -211,6 +220,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         // 서버와의 연결을 위한 ServiceApi 객체를 생성한다.
         mServiceApi = RetrofitClient.getClient().create(ServiceApi.class);
 
+        // 키보드 관련
+        input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
         // 브로드 캐스트 관련
         intentfilter = new IntentFilter(); // 인텐트 필터 생성
         intentfilter.addAction(BROADCAST_LIVE_MSG); // 인텐트 필터에 액션 추가
@@ -229,6 +241,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         findViewById(R.id.tv_send_chat).setOnClickListener(onClickListener);
 
         // 스트리밍 관련 UI 선언
+        chronometer = (Chronometer) findViewById(R.id.chronometer);
         mMic = (ImageView) findViewById(R.id.iv_mic);
         mViewerCount = (TextView) findViewById(R.id.tv_viewer_count);
         mCount = (TextView) findViewById(R.id.tv_count);
@@ -398,14 +411,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             public void run() {
                 Log.d(ACTIVITY_SERVICE, "Disconnected");
 
-                stopRecord(); // 녹화 시작
-
-                if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
-                    rtmpCamera1.stopStream();
-                    rtmpCamera1.stopPreview();
+                if (rtmpCamera1.isRecording()) { // 방송 중이라면, 종료한다.
+                    stopRecord(); // 녹화 종료
                 }
                 saveRoomStatus(roomID);
-                finish(); // 액티비티 종료
             }
         });
     }
@@ -496,12 +505,35 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 if (rtmpCamera1.isStreaming()) { // 방송 중이라면, 종료한다.
+                    screenShot(); // 현재 화면 스크린샷!
                     rtmpCamera1.stopStream();
                     rtmpCamera1.stopPreview();
                 }
-                saveRoomStatus(roomID); // 룸 상태 바꿔주기
-                finish(); // 액티비티 종료
+                saveRoomStatus(roomID); // 룸 상태 바꾸고 정보 넘기기
+
+                try {
+
+                    JSONObject object = new JSONObject();
+                    object.put("type", "liveOff");
+                    object.put("room_id", roomID);
+                    String data = object.toString();
+
+                    Intent finishIntent = new Intent(StreamingActivity.this, LiveChatService.class); // 액티비티 ㅡ> 서비스로 메세지 전달
+                    finishIntent.putExtra(CHAT_DATA, data);
+                    startService(finishIntent);
+                    Log.d(TAG, data);
+
+                    // 방송이 끝난 후 정보 넘기기
+                    Intent intent = new Intent(getApplicationContext(), StreamingResultActivity.class);
+                    intent.putExtra(STREAMING_ROOM_ID, roomID); // 방 번호
+                    startActivity(intent);
+                    finish();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -637,6 +669,10 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 startService(intent);
 
                 broadcastReceiver(); // 리시버 등록하는 함수 작동
+
+                // 카운트 다운이 끝남과 동시에 방송 시작 카운트
+                chronometer.setBase(SystemClock.elapsedRealtime()); // 초기화
+                chronometer.start();
             }
         };
     }
@@ -741,6 +777,9 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     // 메시지를 보내는 곳
     private void sendMessage() {
         String message = mEditMessage.getText().toString();
+
+        mEditMessage.setText("");
+        input.hideSoftInputFromWindow(mEditMessage.getWindowToken(), 0);
 
         // 채팅 RecyclerView 에 내가 보낸 메시지 추가
         mLiveChatList.add(new LiveChatItem(userID, userName, userPhoto, message));
