@@ -23,7 +23,6 @@ import com.example.petcam.network.ServiceApi;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -99,19 +98,24 @@ public class StreamingResultActivity extends AppCompatActivity {
                 // 정상적으로 네트워크 통신 완료
                 if (response.isSuccessful() && response.body() != null) {
                     mDataList = response.body();
-                    mViewerCount.setText((mDataList.size() ) + " viewers");
+
                     Glide.with(getApplicationContext())
                             .load(mDataList.get(0).getThumbnail_image())
                             .into(mBackground);
 
-                    for(int i = 0; i < mDataList.size(); i++) {
-                        String getViewerPhoto  = mDataList.get(i).getViewer_image();
-                        mList.add(new ViewersItem(getViewerPhoto));
+                    if(mDataList.get(0).getViewer_image() == null) {
+                        mViewerCount.setText("0 viewer");
+                    } else {
+                        mViewerCount.setText((mDataList.size()) + " viewers");
+                        for(int i = 0; i < mDataList.size(); i++) {
+                            String getViewerPhoto  = mDataList.get(i).getViewer_image();
+                            mList.add(new ViewersItem(getViewerPhoto));
+                        }
+                        mViewersRV.setLayoutManager(new GridLayoutManager(StreamingResultActivity.this, mDataList.size()));
+                        adapter = new ViewersAdapter(mList, StreamingResultActivity.this);
+                        mViewersRV.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                     }
-                    mViewersRV.setLayoutManager(new GridLayoutManager(StreamingResultActivity.this, mDataList.size()));
-                    adapter = new ViewersAdapter(mList, StreamingResultActivity.this);
-                    mViewersRV.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
                 }
             }
 
