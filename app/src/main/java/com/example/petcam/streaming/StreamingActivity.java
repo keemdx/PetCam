@@ -474,7 +474,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yy" + "MM" + "dd" + "HH" + "mm" + "ss");
                     timeStamp = format.format(new Date());
-                    rtmpCamera1.startRecord(folder.getAbsolutePath() + "/" + format + ".mp4");
+                    rtmpCamera1.startRecord(folder.getAbsolutePath() + "/" + timeStamp + ".mp4");
 
                 } catch (IOException e) {
                     rtmpCamera1.stopRecord();
