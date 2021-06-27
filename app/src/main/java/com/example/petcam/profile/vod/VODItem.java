@@ -1,18 +1,33 @@
 package com.example.petcam.profile.vod;
 
+import com.google.gson.annotations.SerializedName;
+
 public class VODItem {
 
-    private String title, createAt, hits, thumbnail, name, profileImage;
-    private int hitsImage;
+    @SerializedName("roomID") private long roomID;
+    @SerializedName("title") private String title;
+    @SerializedName("createAt") private String createAt;
+    @SerializedName("hits") private int hits;
+    @SerializedName("thumbnail") private String thumbnail;
+    @SerializedName("name") private String name;
+    @SerializedName("profileImage") private String profileImage;
 
-    public VODItem(String title, String createAt, String hits, String thumbnail, String name, String profileImage, int hitsImage) {
+    public VODItem(long roomID, String title, String createAt, int hits, String thumbnail, String name, String profileImage) {
+        this.roomID = roomID;
         this.title = title;
         this.createAt = createAt;
         this.hits = hits;
         this.thumbnail = thumbnail;
         this.name = name;
         this.profileImage = profileImage;
-        this.hitsImage = hitsImage;
+    }
+
+    public long getRoomID() {
+        return roomID;
+    }
+
+    public void setRoomID(long roomID) {
+        this.roomID = roomID;
     }
 
     public String getTitle() {
@@ -31,11 +46,11 @@ public class VODItem {
         this.createAt = createAt;
     }
 
-    public String getHits() {
+    public int getHits() {
         return hits;
     }
 
-    public void setHits(String hits) {
+    public void setHits(int hits) {
         this.hits = hits;
     }
 
@@ -61,13 +76,5 @@ public class VODItem {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
-    }
-
-    public int getHitsImage() {
-        return hitsImage;
-    }
-
-    public void setHitsImage(int hitsImage) {
-        this.hitsImage = hitsImage;
     }
 }

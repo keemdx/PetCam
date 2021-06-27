@@ -13,6 +13,7 @@ import com.example.petcam.profile.notice.FixTopNoticeItem;
 import com.example.petcam.profile.notice.NoticeCommentItem;
 import com.example.petcam.profile.notice.NoticeContents;
 import com.example.petcam.profile.notice.NoticeItem;
+import com.example.petcam.profile.vod.VODItem;
 import com.example.petcam.streaming.ViewersItem;
 
 import java.util.ArrayList;
@@ -363,5 +364,11 @@ public interface ServiceApi {
                                     @Field("time") String time);
 
     // =========================================================================================================
+
+    /** [VOD 관련] **/
+    @FormUrlEncoded
+    @POST("get-vod-list.php")
+    Call<List<VODItem>> getVODList (@Field("userID") String userID);
+
 
 }

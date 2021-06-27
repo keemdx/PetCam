@@ -67,6 +67,7 @@
         <activity android:name=".streaming.StreamingPlayerActivity" />
         <activity android:name=".streaming.StreamingFinishActivity" />
         <activity android:name=".streaming.StreamingResultActivity" />
+        <activity android:name=".streaming.VODPlayerActivity" />
 
         <service
             android:name=".streaming.LiveChatService"

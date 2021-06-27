@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,8 +14,33 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="1dp"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_none"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="62dp"
+                android:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    app:srcCompat="@drawable/ic_3circles"
+                    android:layout_width="65dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="등록된 VOD가 없습니다."
+                    android:textColor="@color/black"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_vod"
