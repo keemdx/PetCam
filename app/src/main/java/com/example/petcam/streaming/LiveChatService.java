@@ -180,6 +180,23 @@ public class LiveChatService extends Service {
                                         e.printStackTrace();
                                     }
                                     break;
+
+                                // 채팅 저장을 위해 시간을 전송한다. (추후 VOD 영상과의 싱크를 위해 필요)
+                                case "time":
+
+                                    try {
+                                        String liveTime = jsonObject.getString("liveTime");
+                                        String room_id = jsonObject.getString("room_id");
+
+                                        Intent intent = new Intent(BROADCAST_LIVE_MSG);
+                                        intent.putExtra("type", "time");
+                                        intent.putExtra("room_id", room_id);
+                                        intent.putExtra("liveTime", liveTime); // 현재 라이브 시간
+                                        sendBroadcast(intent);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
                             }
                         }
                     });

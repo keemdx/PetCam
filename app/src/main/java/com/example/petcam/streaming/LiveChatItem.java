@@ -8,6 +8,7 @@ public class LiveChatItem {
     @SerializedName("userName") private String userName;
     @SerializedName("userProfileImage") private String userProfileImage;
     @SerializedName("message") private String message;
+    @SerializedName("liveTime") private String liveTime;
 
     public LiveChatItem(String userId, String userName, String userProfileImage, String message) {
         this.userId = userId;
@@ -46,5 +47,13 @@ public class LiveChatItem {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getLiveTime() {
+        return liveTime;
+    }
+
+    public void setLiveTime(String liveTime) {
+        this.liveTime = liveTime;
     }
 }

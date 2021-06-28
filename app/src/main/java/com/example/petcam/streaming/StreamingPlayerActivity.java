@@ -81,7 +81,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
 
     // 스트리밍 방 관련
     private int viewer;
-    private String roomID, userID, userPhoto, userName;
+    private String roomID, userID, userPhoto, userName, liveTime;
     private TextView mViewerCount;
 
     // 채팅 관련
@@ -105,6 +105,8 @@ public class StreamingPlayerActivity extends AppCompatActivity {
 
                 case R.id.iv_player_finish: // 방송 나가기 버튼
 
+                    // 유저 수 -1 해서 저장하기
+                    setViewerCount("END", roomID);
                     finish(); // 액티비티 종료
                     break;
 
@@ -234,28 +236,32 @@ public class StreamingPlayerActivity extends AppCompatActivity {
                 String type = intent.getStringExtra("type");
                 String room_id = intent.getStringExtra("room_id");
 
-                // 일반적인 메세지를 받았을 때 실행한다.
-                if (type.equals("message") && room_id.equals(roomID)) {
-                    Log.d(TAG, "message 작동");
+                if (room_id.equals(roomID)) {
+                    // 일반적인 메세지를 받았을 때 실행한다.
+                    if (type.equals("message")) {
+                        Log.d(TAG, "message 작동");
 
-                    String sender_id = String.valueOf(intent.getIntExtra("id", 1));
-                    String sender_name = intent.getStringExtra("name");
-                    String sender_profile = intent.getStringExtra("profile");
-                    String sender_message = intent.getStringExtra("message");
+                        String sender_id = String.valueOf(intent.getIntExtra("id", 1));
+                        String sender_name = intent.getStringExtra("name");
+                        String sender_profile = intent.getStringExtra("profile");
+                        String sender_message = intent.getStringExtra("message");
 
-                    // 받아온 메시지 데이터를 RecyclerView 에 추가한다.
-                    mLiveChatList.add(new LiveChatItem(sender_id, sender_name, sender_profile, sender_message));
-                    adapter = new LiveChatAdapter(mLiveChatList, StreamingPlayerActivity.this);
-                    mLiveChatRV.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    focusCurrentMessage(); // 최신 메시지 보여주기
+                        // 받아온 메시지 데이터를 RecyclerView 에 추가한다.
+                        mLiveChatList.add(new LiveChatItem(sender_id, sender_name, sender_profile, sender_message));
+                        adapter = new LiveChatAdapter(mLiveChatList, StreamingPlayerActivity.this);
+                        mLiveChatRV.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        focusCurrentMessage(); // 최신 메시지 보여주기
 
-                    // 라이브 스트리밍 종료 시 실행한다. (종료 페이지)
-                } else if (type.equals("liveOff") && room_id.equals(roomID)) {
-                    Intent finishIntent =new Intent(getApplicationContext(), StreamingFinishActivity.class);
-                    finishIntent.putExtra(STREAMING_ROOM_ID, roomID);
-                    startActivity(finishIntent);
-                    finish();
+                        // 라이브 스트리밍 종료 시 실행한다. (종료 페이지)
+                    } else if (type.equals("liveOff")) {
+                        Intent finishIntent = new Intent(getApplicationContext(), StreamingFinishActivity.class);
+                        finishIntent.putExtra(STREAMING_ROOM_ID, roomID);
+                        startActivity(finishIntent);
+                        finish();
+                    } else if (type.equals("time")) { // 서버로부터 방송 시간 받기
+                        liveTime = intent.getStringExtra("liveTime");
+                    }
                 }
             }
         };
@@ -328,7 +334,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA);
         String sendTime = simpleDateFormat.format(new Date(now));
 
-        mServiceApi.saveLiveChat(roomID, userID, message, sendTime).enqueue(new Callback<ResultModel>() {
+        mServiceApi.saveLiveChat(roomID, userID, message, sendTime, liveTime).enqueue(new Callback<ResultModel>() {
             // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
             @Override
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
@@ -420,8 +426,6 @@ public class StreamingPlayerActivity extends AppCompatActivity {
         }
         // 브로드캐스트 종료하기
         broadcastReceiverEnd();
-        // 유저 수 -1 해서 저장하기
-        setViewerCount("END", roomID);
     }
 
     // =========================================================================================================

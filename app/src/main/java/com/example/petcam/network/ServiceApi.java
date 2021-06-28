@@ -14,6 +14,7 @@ import com.example.petcam.profile.notice.NoticeCommentItem;
 import com.example.petcam.profile.notice.NoticeContents;
 import com.example.petcam.profile.notice.NoticeItem;
 import com.example.petcam.profile.vod.VODItem;
+import com.example.petcam.streaming.LiveChatItem;
 import com.example.petcam.streaming.ViewersItem;
 
 import java.util.ArrayList;
@@ -361,7 +362,13 @@ public interface ServiceApi {
     Call<ResultModel> saveLiveChat (@Field("roomID") String roomID,
                                     @Field("userID") String userID,
                                     @Field("message") String message,
-                                    @Field("time") String time);
+                                    @Field("time") String time,
+                                    @Field("liveTime") String liveTime);
+
+    // 라이브 종료 시 보여줄 시청자 프로필 사진, 룸 thumbnail 가져오기
+    @FormUrlEncoded
+    @POST("get-live-chat.php")
+    Call<List<LiveChatItem>> getLiveChat (@Field("roomID") String roomID);
 
     // =========================================================================================================
 

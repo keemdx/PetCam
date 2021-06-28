@@ -462,6 +462,43 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
     // =========================================================================================================
 
+    // 라이브 방송 시간을 1초 간격으로 전송한다. (스트리머 -> 서버 -> 클라이언트)
+    // 녹화된 VOD 영상과 실시간 채팅의 sync 를 위해 필요하다.
+    private void sendTimeToClient() {
+
+        // 방송 시작 시 타이머를 시작한다.
+        chronometer.setBase(SystemClock.elapsedRealtime()); // 초기화
+        chronometer.start(); // Chronometer 시작 -> 틱마다 이벤트를 발생시킨다.
+
+        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+
+                try {
+                    liveTime = (String) chronometer.getText(); // 현재 방송 시간 가져오기
+                    liveTime = liveTime.replaceAll(":",""); // 0001, 0002 ...
+
+                    JSONObject object = new JSONObject();
+
+                    object.put("type", "time");
+                    object.put("liveTime", liveTime);
+                    object.put("room_id", roomID);
+
+                    String data = object.toString();
+
+                    Intent intent = new Intent(StreamingActivity.this, LiveChatService.class); // 액티비티 ㅡ> 서비스로 메세지 전달
+                    intent.putExtra(CHAT_DATA, data);
+                    startService(intent);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    // =========================================================================================================
+
     // 녹화를 시작한다. (VOD)
     public void startRecord() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -669,10 +706,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 startService(intent);
 
                 broadcastReceiver(); // 리시버 등록하는 함수 작동
-
-                // 카운트 다운이 끝남과 동시에 방송 시작 카운트
-                chronometer.setBase(SystemClock.elapsedRealtime()); // 초기화
-                chronometer.start();
+                sendTimeToClient(); // 클라이언트로 방송 시간 보내는 함수 작동
             }
         };
     }
@@ -828,7 +862,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA);
         String sendTime = simpleDateFormat.format(new Date(now));
 
-        mServiceApi.saveLiveChat(roomID, userID, message, sendTime).enqueue(new Callback<ResultModel>() {
+        mServiceApi.saveLiveChat(roomID, userID, message, sendTime, liveTime).enqueue(new Callback<ResultModel>() {
             // 통신이 성공했을 경우 호출된다. Response 객체에 응답받은 데이터가 들어있다.
             @Override
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
@@ -858,22 +892,27 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 String type = intent.getStringExtra("type");
                 String room_id = intent.getStringExtra("room_id");
 
-                // 일반적인 메세지를 받았을 때 실행한다.
-                if (type.equals("message") && room_id.equals(roomID)) {
-                    Log.d(TAG, "message 작동");
+                if(room_id.equals(roomID)) {
+                    // 일반적인 메세지를 받았을 때 실행한다.
+                    if (type.equals("message")) {
+                        Log.d(TAG, "message 작동");
 
-                    String sender_id = String.valueOf(intent.getIntExtra("id", 1));
-                    String sender_name = intent.getStringExtra("name");
-                    String sender_profile = intent.getStringExtra("profile");
-                    String sender_message = intent.getStringExtra("message");
+                        String sender_id = String.valueOf(intent.getIntExtra("id", 1));
+                        String sender_name = intent.getStringExtra("name");
+                        String sender_profile = intent.getStringExtra("profile");
+                        String sender_message = intent.getStringExtra("message");
 
-                    // 받아온 메시지 데이터를 RecyclerView 에 추가한다.
-                    mLiveChatList.add(new LiveChatItem(sender_id, sender_name, sender_profile, sender_message));
-                    adapter = new LiveChatAdapter(mLiveChatList, StreamingActivity.this);
-                    mLiveChatRV.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    focusCurrentMessage(); // 최신 메시지 보여주기
+                        // 받아온 메시지 데이터를 RecyclerView 에 추가한다.
+                        mLiveChatList.add(new LiveChatItem(sender_id, sender_name, sender_profile, sender_message));
+                        adapter = new LiveChatAdapter(mLiveChatList, StreamingActivity.this);
+                        mLiveChatRV.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        focusCurrentMessage(); // 최신 메시지 보여주기
+
+                    } else if (type.equals("time")) { // 서버로부터 방송 시간 받기
+                        liveTime = intent.getStringExtra("liveTime");
                     }
+                }
                 }
         };
         registerReceiver(broadcastReceiver, intentfilter);
