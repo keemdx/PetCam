@@ -14,6 +14,7 @@ import android.widget.RadioGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.petcam.R;
 import com.example.petcam.chatting.ChatroomActivity;
@@ -42,6 +43,7 @@ public class HomeFragment extends Fragment {
     private List<ChartChannelsItem> mChannelsList;
     private RadioGroup radioGroup;
     private RadioButton mVideosRB, mChannelsRB;
+    private SwipeRefreshLayout mSwipeRefresh;
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -130,6 +132,24 @@ public class HomeFragment extends Fragment {
                         break;
                 }
 
+            }
+        });
+
+        // 스와이프로 새로고침하기
+        mSwipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // 동작이 완료 되면 새로고침 아이콘 없애기
+                mSwipeRefresh.setRefreshing(false);
+
+                mFollowingList.clear();
+                mPopularList.clear();
+                mVideosList.clear();
+
+                getLiveNowFriends(userID);
+                getHotLiveRooms();
+                getVODChart("video");
             }
         });
         return view;

@@ -73,7 +73,7 @@ public class ChartVideosAdapter extends RecyclerView.Adapter<ChartVideosAdapter.
         if (item.getViewer() <= 0) {
             holder.tv_hits.setText("0");
         } else {
-            holder.tv_hits.setText(item.getViewer());
+            holder.tv_hits.setText(String.valueOf(item.getViewer()));
         }
 
         if (item.getUserProfileImage() == null) {

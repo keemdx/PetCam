@@ -3,6 +3,7 @@ package com.example.petcam.chatting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -59,6 +60,7 @@ public class ChatroomActivity extends AppCompatActivity{
     private String userID;
     private RecyclerView rv_chatroom;
     private List<ChatroomItem> mChatroomList;
+    private SwipeRefreshLayout mSwipeRefresh;
 
     BroadcastReceiver mReceiver;
 
@@ -111,6 +113,19 @@ public class ChatroomActivity extends AppCompatActivity{
         intentfilter.addAction("com.dwfox.myapplication.SEND_BROAD_CAST");
 
         getChatroom(userID); // 채팅룸 리스트 가져오기
+
+        // 스와이프로 새로고침하기
+        mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // 동작이 완료 되면 새로고침 아이콘 없애기
+                mSwipeRefresh.setRefreshing(false);
+
+                mChatroomList.clear();
+                getChatroom(userID);
+            }
+        });
 
         // Receiver 구현
         mReceiver = new BroadcastReceiver() {
