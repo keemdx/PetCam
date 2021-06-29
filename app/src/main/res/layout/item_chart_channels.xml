@@ -18,7 +18,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView14"
+            android:id="@+id/tv_rank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -37,12 +37,12 @@
             android:layout_height="50dp"
             android:layout_gravity="bottom|center_horizontal"
 
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:src="@drawable/ic_launcher_background"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView14"
+            app:layout_constraintStart_toEndOf="@+id/tv_rank"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -51,19 +51,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="18dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:maxLength="24"
             android:maxLines="1"
             android:text="사이먼도미닉"
             android:textColor="#000000"
-            android:textSize="14sp"
-            android:textStyle="normal"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/civ_user_profile"
             app:layout_constraintTop_toTopOf="@+id/civ_user_profile" />
 
         <TextView
-            android:id="@+id/tv_name2"
+            android:id="@+id/tv_fans"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -72,7 +72,7 @@
             android:maxLength="24"
             android:maxLines="1"
             android:text="71,602 팬"
-            android:textColor="#8A8A8A"
+            android:textColor="#A5A5A5"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/tv_user_name"
             app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />

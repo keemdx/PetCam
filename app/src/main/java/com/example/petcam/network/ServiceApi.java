@@ -5,6 +5,9 @@ import com.example.petcam.chatting.ChatroomItem;
 import com.example.petcam.chatting.ChattingDataItem;
 import com.example.petcam.chatting.ChattingItem;
 import com.example.petcam.chatting.SearchUserItem;
+import com.example.petcam.main.ChartChannelsItem;
+import com.example.petcam.main.ChartVideosAdapter;
+import com.example.petcam.main.ChartVideosItem;
 import com.example.petcam.main.FollowingItem;
 import com.example.petcam.main.PopularItem;
 import com.example.petcam.profile.FollowListItem;
@@ -376,6 +379,20 @@ public interface ServiceApi {
     @FormUrlEncoded
     @POST("get-vod-list.php")
     Call<List<VODItem>> getVODList (@Field("userID") String userID);
+
+    // =========================================================================================================
+
+    /** [메인 차트 관련] **/
+
+    // 채널 차트 가져오기
+    @FormUrlEncoded
+    @POST("get-chart.php")
+    Call<List<ChartChannelsItem>> getChannelChart (@Field("chart") String chart);
+
+    // 비디오 차트 가져오기
+    @FormUrlEncoded
+    @POST("get-chart.php")
+    Call<List<ChartVideosItem>> getVODChart (@Field("chart") String chart);
 
 
 }

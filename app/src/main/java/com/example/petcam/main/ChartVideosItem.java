@@ -1,42 +1,47 @@
 package com.example.petcam.main;
 
+import com.google.gson.annotations.SerializedName;
+
 public class ChartVideosItem {
 
-    private String title, createAt, hits, thumbnail, name, profileImage;
-    private int hitsImage;
+    @SerializedName("no") private int no;
+    @SerializedName("roomID") private String roomID;
+    @SerializedName("viewer") private int viewer;
+    @SerializedName("roomTitle") private String roomTitle;
+    @SerializedName("thumbnail") private String thumbnail;
+    @SerializedName("userName") private String userName;
+    @SerializedName("userProfileImage") private String userProfileImage;
 
-    public ChartVideosItem(String title, String createAt, String hits, String thumbnail, String name, String profileImage, int hitsImage) {
-        this.title = title;
-        this.createAt = createAt;
-        this.hits = hits;
-        this.thumbnail = thumbnail;
-        this.name = name;
-        this.profileImage = profileImage;
-        this.hitsImage = hitsImage;
+    public int getNo() {
+        return no;
     }
 
-    public String getTitle() {
-        return title;
+    public void setNo(int no) {
+        this.no = no;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getRoomID() {
+        return roomID;
     }
 
-    public String getCreateAt() {
-        return createAt;
+    public void setRoomID(String roomID) {
+        this.roomID = roomID;
     }
 
-    public void setCreateAt(String createAt) {
-        this.createAt = createAt;
+    public int getViewer() {
+        return viewer;
     }
 
-    public String getHits() {
-        return hits;
+    public void setViewer(int viewer) {
+        this.viewer = viewer;
     }
 
-    public void setHits(String hits) {
-        this.hits = hits;
+    public String getRoomTitle() {
+        return roomTitle;
+    }
+
+    public void setRoomTitle(String roomTitle) {
+        this.roomTitle = roomTitle;
     }
 
     public String getThumbnail() {
@@ -47,27 +52,19 @@ public class ChartVideosItem {
         this.thumbnail = thumbnail;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getProfileImage() {
-        return profileImage;
+    public String getUserProfileImage() {
+        return userProfileImage;
     }
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public int getHitsImage() {
-        return hitsImage;
-    }
-
-    public void setHitsImage(int hitsImage) {
-        this.hitsImage = hitsImage;
+    public void setUserProfileImage(String userProfileImage) {
+        this.userProfileImage = userProfileImage;
     }
 }

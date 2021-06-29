@@ -91,32 +91,15 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager pManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         mPopularRV.setLayoutManager(pManager); // LayoutManager 등록
 
-        getHotLiveRooms(); // 실시간 방송 뷰어(시청자) 순으로 가져오기
 
-
-        mVideosList = new ArrayList<>();
-        ChartVideosItem chartVideosItem = new ChartVideosItem("쿠마랑 나들이",
-                String.valueOf(System.currentTimeMillis()),
-                "333",
-                "",
-                "제니",
-                "",
-                R.drawable.ic_profile);
-        mVideosList.add(chartVideosItem);
-
-        ChartVideosItem chartVideosItem1 = new ChartVideosItem("차오츄르먹방!!!",
-                String.valueOf(System.currentTimeMillis()),
-                "2",
-                "",
-                "코로나",
-                "",
-                R.drawable.ic_profile);
-        mVideosList.add(chartVideosItem1);
-
+        // 차트 리스트
         mChartsRV = view.findViewById(R.id.rv_charts);
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mChartsRV.setLayoutManager(manager); // LayoutManager 등록
-        mChartsRV.setAdapter(new ChartVideosAdapter(mVideosList, getContext()));
+
+        getHotLiveRooms(); // 실시간 방송 뷰어(시청자) 순으로 가져오기
+
+        getVODChart("video"); // 채널 차트 가져오기
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -126,44 +109,12 @@ public class HomeFragment extends Fragment {
                     // 채널 2개 버튼
                     case R.id.rb_videos: // 비디오(vod) 차트
 
-                    mVideosList = new ArrayList<>();
-                    ChartVideosItem chartVideosItem = new ChartVideosItem("쿠마랑 나들이",
-                            String.valueOf(System.currentTimeMillis()),
-                            "333",
-                            "",
-                            "제니",
-                            "",
-                            R.drawable.ic_profile);
-                    mVideosList.add(chartVideosItem);
-
-                    ChartVideosItem chartVideosItem1 = new ChartVideosItem("차오츄르먹방!!!",
-                            String.valueOf(System.currentTimeMillis()),
-                            "2",
-                            "",
-                            "코로나",
-                            "",
-                            R.drawable.ic_profile);
-                    mVideosList.add(chartVideosItem1);
-
-                    mChartsRV = view.findViewById(R.id.rv_charts);
-                    LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                    mChartsRV.setLayoutManager(manager); // LayoutManager 등록
-                    mChartsRV.setAdapter(new ChartVideosAdapter(mVideosList, getContext()));
-
+                        getVODChart("video"); // 비디오(vod) 차트 가져오기
                         break;
 
                     case R.id.rb_channels: // 채널 차트
 
-                        mChannelsList = new ArrayList<>();
-                        ChartChannelsItem chartChannelsItem = new ChartChannelsItem("33","제니","");
-                        mChannelsList.add(chartChannelsItem);
-
-                        ChartChannelsItem chartChannelsItem2 = new ChartChannelsItem("33","쿠쿠파파잉","");
-                        mChannelsList.add(chartChannelsItem2);
-                        LinearLayoutManager manager2 = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-                        mChartsRV.setLayoutManager(manager2); // LayoutManager 등록
-                        mChartsRV.setAdapter(new ChartChannelsAdapter(mChannelsList, getContext()));
-
+                        getChannelChart("channel"); // 채널 차트 가져오기
                         break;
 
                     default:
@@ -228,6 +179,48 @@ public class HomeFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<List<PopularItem>> call, Throwable t) {
+                Log.e("오류태그", t.getMessage());
+            }
+        });
+    }
+
+    // =========================================================================================================
+
+    // [데일리 차트] 유저 채널 차트 팔로워 순으로 가져와서 보여주기
+    private void getChannelChart(String chart) {
+
+        Call<List<ChartChannelsItem>> call = mServiceApi.getChannelChart(chart);
+        call.enqueue(new Callback<List<ChartChannelsItem>>() {
+            @Override
+            public void onResponse(Call<List<ChartChannelsItem>> call, Response<List<ChartChannelsItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    mChannelsList = response.body();
+                    mChartsRV.setAdapter(new ChartChannelsAdapter(mChannelsList, getContext()));
+                }
+            }
+            @Override
+            public void onFailure(Call<List<ChartChannelsItem>> call, Throwable t) {
+                Log.e("오류태그", t.getMessage());
+            }
+        });
+    }
+
+    // =========================================================================================================
+
+    // [데일리 차트] -> 오늘 저장된 VOD 뷰어 순으로 가져와서 보여주기
+    private void getVODChart(String chart) {
+
+        Call<List<ChartVideosItem>> call = mServiceApi.getVODChart(chart);
+        call.enqueue(new Callback<List<ChartVideosItem>>() {
+            @Override
+            public void onResponse(Call<List<ChartVideosItem>> call, Response<List<ChartVideosItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    mVideosList = response.body();
+                    mChartsRV.setAdapter(new ChartVideosAdapter(mVideosList, getContext()));
+                }
+            }
+            @Override
+            public void onFailure(Call<List<ChartVideosItem>> call, Throwable t) {
                 Log.e("오류태그", t.getMessage());
             }
         });

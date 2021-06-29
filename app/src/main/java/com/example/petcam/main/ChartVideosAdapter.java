@@ -1,6 +1,8 @@
 package com.example.petcam.main;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,42 +44,48 @@ public class ChartVideosAdapter extends RecyclerView.Adapter<ChartVideosAdapter.
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         ChartVideosItem item = mList.get(position);
 
-        // vod 썸네일 이미지
-        try {
+        // vod 차트 랭킹 넘버
+        holder.tv_rank.setText(String.valueOf(item.getNo()));
+        if(item.getNo() > 3) {
+            holder.tv_rank.setTextColor(Color.GRAY);
+        }
+
+        // vod 타이틀
+        holder.tv_vod_title.setText(item.getRoomTitle());
+
+        if(item.getThumbnail() != null) {
+            // vod 썸네일 이미지
             Glide.with(mContext)
                     .load(item.getThumbnail())
                     .transform(new CenterCrop(), new RoundedCorners(20))
                     .override(160)
                     .into(holder.iv_vod_thumbnail);
-        } catch (Exception e){
-
         }
-
-        // vod 타이틀
-        holder.tv_vod_title.setText(item.getTitle());
-
-        // 조회수 이미지
-        holder.iv_hitsImage.setImageResource(item.getHitsImage());
 
         // vod 조회수 : 조회수가 없을 경우 0으로 표시한다.
-        if(item.getHits() == null) {
+        if (item.getViewer() <= 0) {
             holder.tv_hits.setText("0");
         } else {
-            holder.tv_hits.setText(item.getHits());
+            holder.tv_hits.setText(item.getViewer());
         }
 
-        // vod 게시자 프로필 사진
-        try {
+        if (item.getUserProfileImage() == null) {
+
             Glide.with(mContext)
-                    .load(item.getProfileImage())
+                    .load(R.drawable.ic_user)
                     .transform(new CenterCrop(), new RoundedCorners(20))
                     .override(160)
                     .into(holder.iv_profile);
-        } catch (Exception e) {
-
+        } else {
+            Glide.with(mContext)
+                    .load(item.getUserProfileImage())
+                    .transform(new CenterCrop(), new RoundedCorners(20))
+                    .override(160)
+                    .into(holder.iv_profile);
         }
-            // vod 게시자 닉네임
-        holder.tv_name.setText(item.getName());
+
+        // vod 게시자 닉네임
+        holder.tv_name.setText(item.getUserName());
 
     }
 
@@ -89,16 +97,16 @@ public class ChartVideosAdapter extends RecyclerView.Adapter<ChartVideosAdapter.
 
     // 리사이클러뷰 홀더
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tv_createAt, tv_vod_title, tv_hits, tv_name;
+        public TextView tv_vod_title, tv_hits, tv_name, tv_rank;
         public ImageView iv_vod_thumbnail, iv_hitsImage, iv_profile;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            tv_createAt = itemView.findViewById(R.id.tv_createAt);
+            tv_rank = itemView.findViewById(R.id.tv_rank);
             tv_vod_title = itemView.findViewById(R.id.tv_vod_title);
-            tv_hits = itemView.findViewById(R.id.tv_comment_createAt);
+            tv_hits = itemView.findViewById(R.id.tv_hits);
             tv_name = itemView.findViewById(R.id.tv_name);
-            iv_vod_thumbnail = itemView.findViewById(R.id.iv_thumbnail);
+            iv_vod_thumbnail = itemView.findViewById(R.id.iv_vod_thumbnail);
             iv_hitsImage = itemView.findViewById(R.id.iv_hitsImage);
             iv_profile= itemView.findViewById(R.id.civ_profile);
 

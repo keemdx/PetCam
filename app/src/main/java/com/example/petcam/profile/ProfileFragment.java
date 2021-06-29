@@ -164,13 +164,12 @@ public class ProfileFragment extends Fragment {
         mUserName.setText(userName);
         mUserStatus.setText(userStatus);
 
-        if (userPhoto != null) {
-            // 현재 유저 프로필 이미지 보여주기
-            Glide.with(this).load(userPhoto).centerCrop().into(mUserImage);
-
-        } else {
+        if (userPhoto.isEmpty()) {
             // 현재 유저 프로필 이미지 보여주기
             Glide.with(this).load(R.drawable.ic_user).centerCrop().into(mUserImage);
+        } else {
+            // 현재 유저 프로필 이미지 보여주기
+            Glide.with(this).load(userPhoto).centerCrop().into(mUserImage);
         }
         getFollow(userID); // 팔로잉, 팬 수 가져오기
     }
