@@ -566,6 +566,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                     Intent intent = new Intent(getApplicationContext(), StreamingResultActivity.class);
                     intent.putExtra(STREAMING_ROOM_ID, roomID); // 방 번호
                     startActivity(intent);
+                    overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                     finish();
 
                 } catch (JSONException e) {

@@ -258,6 +258,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
                         Intent finishIntent = new Intent(getApplicationContext(), StreamingFinishActivity.class);
                         finishIntent.putExtra(STREAMING_ROOM_ID, roomID);
                         startActivity(finishIntent);
+                        overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                         finish();
                     } else if (type.equals("time")) { // 서버로부터 방송 시간 받기
                         liveTime = intent.getStringExtra("liveTime");

@@ -54,6 +54,7 @@ public class NoticeFragment extends Fragment {
                  case R.id.btn_update_notice:
                      Intent intent = new Intent(getContext(), NoticeActivity.class);
                      startActivity(intent);
+                     getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                      break;
              }
          }

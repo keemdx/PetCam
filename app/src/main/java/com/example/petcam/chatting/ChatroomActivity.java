@@ -78,6 +78,7 @@ public class ChatroomActivity extends AppCompatActivity{
                     Intent intent = new Intent(ChatroomActivity.this, SearchUserActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                     break;
             }
         }
@@ -155,7 +156,7 @@ public class ChatroomActivity extends AppCompatActivity{
             public void onResponse(Call<List<ChatroomItem>> call, Response<List<ChatroomItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     mChatroomList = response.body();
-                    ChatroomAdapter chatroomAdapter = new ChatroomAdapter(mChatroomList, ChatroomActivity.this);
+                    ChatroomAdapter chatroomAdapter = new ChatroomAdapter(mChatroomList, ChatroomActivity.this, ChatroomActivity.this);
                     rv_chatroom.setAdapter(chatroomAdapter);
                     chatroomAdapter.notifyDataSetChanged();
                 }
@@ -171,5 +172,12 @@ public class ChatroomActivity extends AppCompatActivity{
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver); // 브로드 캐스트 리시버 끊기
+    }
+
+    // =========================================================================================================
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
     }
 }

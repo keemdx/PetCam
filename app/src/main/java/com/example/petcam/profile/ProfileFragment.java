@@ -72,12 +72,14 @@ public class ProfileFragment extends Fragment {
                     // 설정 화면으로 이동한다.
                     Intent settingIntent = new Intent(getActivity(), SettingsActivity.class);
                     startActivity(settingIntent);
+                    getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                     break;
 
                 // 프로필 수정 아이콘을 클릭했을 경우,
                 case R.id.iv_edit_profile:
                     Intent intent = new Intent(getActivity(), EditProfileActivity.class);
                     startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                     break;
 
                 case R.id.tv_fan_count:

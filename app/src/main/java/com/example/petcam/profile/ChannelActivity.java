@@ -250,4 +250,11 @@ public class ChannelActivity extends AppCompatActivity implements CompoundButton
         mFollowStatus.setPadding(40,0, 28, 0);
         mFollowStatus.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null);
     }
+
+    // =========================================================================================================
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
+    }
 }

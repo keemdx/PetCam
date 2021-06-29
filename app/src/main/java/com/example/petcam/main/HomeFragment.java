@@ -53,12 +53,14 @@ public class HomeFragment extends Fragment {
                 case R.id.iv_message:
                     Intent intent = new Intent(getContext(), ChatroomActivity.class);
                     startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_not_move);
                     break;
 
                 // 스트리머 검색 액티비티로 넘어간다.
                 case R.id.iv_search:
                     Intent searchIntent = new Intent(getContext(), SearchActivity.class);
                     startActivity(searchIntent);
+                    getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_not_move);
                     break;
             }
         }
@@ -202,7 +204,7 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<List<ChartChannelsItem>> call, Response<List<ChartChannelsItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     mChannelsList = response.body();
-                    mChartsRV.setAdapter(new ChartChannelsAdapter(mChannelsList, getContext()));
+                    mChartsRV.setAdapter(new ChartChannelsAdapter(mChannelsList, getContext(), getActivity()));
                 }
             }
             @Override

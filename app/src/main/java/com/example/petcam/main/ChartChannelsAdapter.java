@@ -79,6 +79,7 @@ public class ChartChannelsAdapter extends RecyclerView.Adapter<ChartChannelsAdap
                 Intent intent = new Intent(mContext, ChannelActivity.class);
                 intent.putExtra(CHANNEL_ID, item.getUserId());
                 mContext.startActivity(intent);
+                mActivity.overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
             }
         });
     }

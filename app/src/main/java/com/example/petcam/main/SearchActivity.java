@@ -147,5 +147,13 @@ public class SearchActivity extends AppCompatActivity implements SearchUserAdapt
         Intent intent = new Intent(getApplicationContext(), ChannelActivity.class);
         intent.putExtra(CHANNEL_ID, searchUserID);
         startActivity(intent);
+        overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+    }
+
+    // =========================================================================================================
+    @Override
+    public void finish() {
+        super.finish();
+        this.overridePendingTransition(R.anim.anim_not_move, R.anim.anim_slide_out_right);
     }
 }

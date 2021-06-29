@@ -158,7 +158,9 @@ public class ChattingActivity extends AppCompatActivity {
                     inviteIntent.putExtra(USER_UID, userID); /// 나의 uid
                     inviteIntent.putExtra(ROOM_ID, chatroomNo); // 방 번호
                     startActivity(inviteIntent);
+                    overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                     break;
+
                 case R.id.iv_exit:
                     alertDialog(view);
                     break;
@@ -720,6 +722,13 @@ public class ChattingActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver); // 브로드 캐스트 리시버 끊기
+    }
+
+    // =========================================================================================================
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
     }
 }
 

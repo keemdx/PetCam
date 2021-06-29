@@ -1,6 +1,7 @@
 package com.example.petcam.chatting;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class ChatroomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private List<ChatroomItem> mList;
     private Context mContext;
+    private Activity mActivity;
 
     public static final int SINGLE = 0;
     public static final int MULTI = 1;
@@ -55,9 +57,10 @@ public class ChatroomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public ChatroomAdapter(List<ChatroomItem> mList, Context mContext) {
+    public ChatroomAdapter(List<ChatroomItem> mList, Context mContext, Activity mActivity) {
         this.mList = mList;
         this.mContext = mContext;
+        this.mActivity = mActivity;
     }
 
     @Override
@@ -133,6 +136,7 @@ public class ChatroomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         intent.putExtra(ROOM_ID, item.getChatroom_id());
                         intent.putExtra(ROOM_NAME, item.getChatroom_name());
                         mContext.startActivity(intent);
+                        mActivity.overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                     }
                 });
                 break;
@@ -189,6 +193,7 @@ public class ChatroomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             intent.putExtra(ROOM_NAME, item.getChatroom_name());
                             intent.putExtra(ROOM_USER_COUNT, item.getChatroom_user_num());
                             mContext.startActivity(intent);
+                            mActivity.overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                         }
                     });
                     break;

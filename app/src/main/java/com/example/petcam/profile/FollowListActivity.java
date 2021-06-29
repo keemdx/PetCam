@@ -134,5 +134,6 @@ public class FollowListActivity extends AppCompatActivity implements FollowListA
         Intent intent = new Intent(FollowListActivity.this, ChannelActivity.class);
         intent.putExtra(CHANNEL_ID, channelID);
         startActivity(intent);
+        overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
     }
 }
