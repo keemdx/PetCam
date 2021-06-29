@@ -1,12 +1,14 @@
 package com.example.petcam.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,9 +18,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.petcam.R;
+import com.example.petcam.profile.ChannelActivity;
+import com.example.petcam.streaming.VODPlayerActivity;
 import com.example.petcam.widget.TimeString;
 
 import java.util.List;
+
+import static com.example.petcam.function.App.CHANNEL_ID;
+import static com.example.petcam.function.App.STREAMING_ROOM_ID;
 
 public class ChartVideosAdapter extends RecyclerView.Adapter<ChartVideosAdapter.ViewHolder> {
 
@@ -87,6 +94,15 @@ public class ChartVideosAdapter extends RecyclerView.Adapter<ChartVideosAdapter.
         // vod 게시자 닉네임
         holder.tv_name.setText(item.getUserName());
 
+        holder.layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, VODPlayerActivity.class);
+                intent.putExtra(STREAMING_ROOM_ID, item.getRoomID());
+                mContext.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -97,11 +113,13 @@ public class ChartVideosAdapter extends RecyclerView.Adapter<ChartVideosAdapter.
 
     // 리사이클러뷰 홀더
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public RelativeLayout layout;
         public TextView tv_vod_title, tv_hits, tv_name, tv_rank;
         public ImageView iv_vod_thumbnail, iv_hitsImage, iv_profile;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            layout = itemView.findViewById(R.id.layout_video);
             tv_rank = itemView.findViewById(R.id.tv_rank);
             tv_vod_title = itemView.findViewById(R.id.tv_vod_title);
             tv_hits = itemView.findViewById(R.id.tv_hits);

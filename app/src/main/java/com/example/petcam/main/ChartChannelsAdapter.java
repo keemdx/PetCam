@@ -1,7 +1,9 @@
 package com.example.petcam.main;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,21 +16,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.petcam.R;
+import com.example.petcam.profile.ChannelActivity;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.example.petcam.function.App.CHANNEL_ID;
 
 
 public class ChartChannelsAdapter extends RecyclerView.Adapter<ChartChannelsAdapter.ViewHolder> {
 
     private List<ChartChannelsItem> mList;
     private Context mContext;
+    private Activity mActivity;
 
 
-    public ChartChannelsAdapter(List<ChartChannelsItem> mList, Context mContext) {
+    public ChartChannelsAdapter(List<ChartChannelsItem> mList, Context mContext, Activity mActivity) {
         this.mList = mList;
         this.mContext = mContext;
+        this.mActivity = mActivity;
     }
 
     @NonNull
@@ -65,6 +72,15 @@ public class ChartChannelsAdapter extends RecyclerView.Adapter<ChartChannelsAdap
             // 현재 유저 프로필 이미지 보여주기
             Glide.with(mContext).load(item.getUserProfileImage()).centerCrop().into(holder.civ_profileImage);
         }
+
+        holder.cv_user_item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ChannelActivity.class);
+                intent.putExtra(CHANNEL_ID, item.getUserId());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
