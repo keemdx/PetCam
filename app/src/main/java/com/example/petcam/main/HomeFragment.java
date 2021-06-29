@@ -19,7 +19,7 @@ import com.example.petcam.R;
 import com.example.petcam.chatting.ChatroomActivity;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -54,6 +54,12 @@ public class HomeFragment extends Fragment {
                     Intent intent = new Intent(getContext(), ChatroomActivity.class);
                     startActivity(intent);
                     break;
+
+                // 스트리머 검색 액티비티로 넘어간다.
+                case R.id.iv_search:
+                    Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                    startActivity(searchIntent);
+                    break;
             }
         }
     };
@@ -73,6 +79,7 @@ public class HomeFragment extends Fragment {
 
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
         view.findViewById(R.id.iv_message).setOnClickListener(onClickListener);
+        view.findViewById(R.id.iv_search).setOnClickListener(onClickListener);
 
         radioGroup = view.findViewById(R.id.rc_group);
         mVideosRB = view.findViewById(R.id.rb_videos);

@@ -51,6 +51,9 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.Vi
         // 유저 닉네임
         holder.tv_name.setText(item.getUserName());
 
+        // 유저 아이디 (클릭 시 전달해줄 값)
+        holder.tv_id.setText(item.getUserId());
+
         // 프로필 이미지가 등록되어 있는지 여부 확인
         if (item.getUserProfileImage() != null) {
             // 현재 유저 프로필 이미지 보여주기
@@ -71,12 +74,13 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
         public CardView cv_user_item;
         public CircleImageView civ_profileImage;
-        public TextView tv_name;
+        public TextView tv_name, tv_id;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.civ_profileImage = itemView.findViewById(R.id.civ_user_profile);
             this.tv_name = itemView.findViewById(R.id.tv_user_name);
+            this.tv_id = itemView.findViewById(R.id.tv_user_id);
             this.cv_user_item = itemView.findViewById(R.id.cv_user_item);
 
             cv_user_item.setOnClickListener(new View.OnClickListener() {

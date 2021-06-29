@@ -32,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".main.SearchActivity"/>
         <activity android:name=".profile.FollowListActivity" />
         <activity android:name=".profile.ChannelActivity" />
 
