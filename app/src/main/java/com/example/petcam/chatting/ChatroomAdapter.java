@@ -42,7 +42,7 @@ public class ChatroomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static final int MULTI = 1;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm aa", Locale.KOREAN);
+    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm aa", Locale.US);
     Date today, chatDate, dateCheck;
     Date newDate = new Date();
     String date, time;
@@ -157,11 +157,13 @@ public class ChatroomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     Glide.with(mContext).load(profileList[0]).centerCrop().into(((MultiViewHolder) holder).civ_multi_profile);
                 }
 
-                if (profileList[1].isEmpty()) {
-                    Glide.with(mContext).load(R.drawable.ic_user).centerCrop().into(((MultiViewHolder) holder).civ_multi_profile2);
-                } else {
-                    // 현재 유저 프로필 이미지 보여주기
-                    Glide.with(mContext).load(profileList[1]).centerCrop().into(((MultiViewHolder) holder).civ_multi_profile2);
+                if (profileList.length > 1) {
+                    if(profileList[1].isEmpty()) {
+                        Glide.with(mContext).load(R.drawable.ic_user).centerCrop().into(((MultiViewHolder) holder).civ_multi_profile2);
+                    } else {
+                        // 현재 유저 프로필 이미지 보여주기
+                        Glide.with(mContext).load(profileList[1]).centerCrop().into(((MultiViewHolder) holder).civ_multi_profile2);
+                    }
                 }
 
                     if (item.getLast_message() != null) {

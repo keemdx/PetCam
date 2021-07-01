@@ -57,6 +57,9 @@ public class EditNoticeActivity extends AppCompatActivity {
                 case R.id.iv_close:
                     finish(); // 이 액티비티 화면을 닫는다.
                     break;
+                case R.id.btn_update_notice:
+                    uploadEditNotice(); // 공지 수정 후 업로드
+                    break;
             }
         }
     };
@@ -191,7 +194,6 @@ public class EditNoticeActivity extends AppCompatActivity {
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(EditNoticeActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
 
                 if(result.getResult().equals("success")) {
                     finish();

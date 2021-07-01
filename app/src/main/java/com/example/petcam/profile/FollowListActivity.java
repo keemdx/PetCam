@@ -78,10 +78,10 @@ public class FollowListActivity extends AppCompatActivity implements FollowListA
         CODE = intent.getIntExtra("CODE",0);
 
         if(CODE == FAN_CODE) {
-            mTitle.setText("팬");
+            mTitle.setText("Fans");
             getFanList(userID);
         } else if(CODE == FOLLOWING_CODE) {
-            mTitle.setText("팔로잉");
+            mTitle.setText("Following");
             getFollowingList(userID);
         }
 

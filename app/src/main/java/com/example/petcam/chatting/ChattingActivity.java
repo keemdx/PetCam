@@ -190,7 +190,7 @@ public class ChattingActivity extends AppCompatActivity {
         intentfilter.addAction("com.dwfox.myapplication.SEND_BROAD_CAST");
 
         // 현재 날짜, 시간
-        simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 E요일_hh:mm a", Locale.KOREA);
+        simpleDateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy_hh:mm aa", Locale.US);
 
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
         findViewById(R.id.iv_close).setOnClickListener(onClickListener);
@@ -322,7 +322,7 @@ public class ChattingActivity extends AppCompatActivity {
                     if (chatroomNo.equals(room_id)) {
                         // 초대된 사람이 있을 경우, 초대 메시지를 보여준다.
                         if(invite_user_name.length() > 1) {
-                            String inviteMessage = sender_name + "님이 " + invite_user_name + "님을 초대했습니다.";
+                            String inviteMessage = sender_name + " invited " + invite_user_name;
                             mList.add(new ChattingItem(null, null, sender_name, null, inviteMessage, START_ROOM));
                             saveMessage(START_ROOM, chatroomNo, inviteMessage, send_time);
                             // 보낸 유저와 현재 유저가 같은 경우 (자신인 경우)
@@ -650,7 +650,7 @@ public class ChattingActivity extends AppCompatActivity {
                         Log.d(TAG, "채팅 나가기 -> ** 님이 나갔습니다. 보내기");
                         Log.d(TAG, "**************************************************");
 
-                        String exitMessage = userName + "님이 나갔습니다.";
+                        String exitMessage = userName + " left this chatroom";
 
                         // 메세지를 서비스로 보내는 곳
                         JSONObject object = new JSONObject();
@@ -690,14 +690,14 @@ public class ChattingActivity extends AppCompatActivity {
     // 채팅 나가기 - 팝업 다이알로그
     public void alertDialog(View view) {
         AlertDialog.Builder alert = new AlertDialog.Builder(ChattingActivity.this);
-        alert.setMessage("채팅방에서 나가겠습니까?");
-        alert.setPositiveButton("나가기", new DialogInterface.OnClickListener() {
+        alert.setMessage("Are you sure you want to leave this chatroom?");
+        alert.setPositiveButton("Leave", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 removeChatMember(chatroomNo, userID);
             }
         });
-        alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel(); // 취소

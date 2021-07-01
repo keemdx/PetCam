@@ -109,9 +109,9 @@ public class ChannelActivity extends AppCompatActivity implements CompoundButton
 
         // ViewPagerAdapter을 사용하여 Fragment를 연결
         ChannelViewPagerAdapter viewPagerAdapter = new ChannelViewPagerAdapter(getSupportFragmentManager(), 0);
-        viewPagerAdapter.addFragment(noticeFragment, "공지");
-        viewPagerAdapter.addFragment(VODFragment, "동영상");
-        viewPagerAdapter.addFragment(fanboardFragment, "팬보드");
+        viewPagerAdapter.addFragment(noticeFragment, "Notice");
+        viewPagerAdapter.addFragment(VODFragment, "Videos");
+        viewPagerAdapter.addFragment(fanboardFragment, "Fan Board");
         viewPager.setAdapter(viewPagerAdapter);
 
     }
@@ -237,14 +237,14 @@ public class ChannelActivity extends AppCompatActivity implements CompoundButton
 
     private void isChecked() { // 체크했을 경우 UI
         mFollowStatus.setChecked(true);
-        mFollowStatus.setText("팬");
+        mFollowStatus.setText("Fan");
         mFollowStatus.setPadding(40,0, 40, 0);
         mFollowStatus.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
     }
 
     private void isNotChecked() { // 체크 해제할 경우 UI
         mFollowStatus.setChecked(false);
-        mFollowStatus.setText("팔로잉");
+        mFollowStatus.setText("Following");
         @SuppressLint("UseCompatLoadingForDrawables") Drawable img = getResources().getDrawable(R.drawable.ic_add_small);
         img.setTint(Color.WHITE);
         mFollowStatus.setPadding(40,0, 28, 0);

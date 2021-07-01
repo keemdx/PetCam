@@ -46,7 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/notosans_regular"
-                    android:text="메시지"
+                    android:text="Message"
                     android:textColor="#222"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"

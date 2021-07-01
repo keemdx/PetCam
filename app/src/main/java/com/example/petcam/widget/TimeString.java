@@ -19,17 +19,37 @@ public class TimeString {
         String msg = null;
 
         if (diffTime < TimeString.SEC) {
-            msg = "방금";
+            msg = "now";
         } else if ((diffTime /= TimeString.SEC) < TimeString.MIN) {
-            msg = diffTime + "분 전";
+            if (diffTime > 1) {
+                msg = diffTime + " minutes ago";
+            } else {
+                msg = diffTime + " minute ago";
+            }
         } else if ((diffTime /= TimeString.MIN) < TimeString.HOUR) {
-            msg = (diffTime) + "시간 전";
+            if (diffTime > 1) {
+                msg = (diffTime) + " hours ago";
+            } else {
+                msg = (diffTime) + " hour ago";
+            }
         } else if ((diffTime /= TimeString.HOUR) < TimeString.DAY) {
-            msg = (diffTime) + "일 전";
+            if (diffTime > 1) {
+                msg = (diffTime) + " days ago";
+            } else {
+                msg = (diffTime) + " day ago";
+            }
         } else if ((diffTime /= TimeString.DAY) < TimeString.MONTH) {
-            msg = (diffTime) + "달 전";
+            if (diffTime > 1) {
+                msg = (diffTime) + " months ago";
+            } else {
+                msg = (diffTime) + " month ago";
+            }
         } else {
-            msg = (diffTime) + "년 전";
+            if (diffTime > 1) {
+                msg = (diffTime) + " years ago";
+            } else {
+                msg = (diffTime) + " year ago";
+            }
         }
         return msg;
     }

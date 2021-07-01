@@ -33,7 +33,7 @@
                 <ImageView
                     android:id="@+id/imageView4"
                     android:layout_width="65dp"
-                    android:layout_height="58dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_3circles" />
 
@@ -42,9 +42,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="등록된 글이 없습니다."
+                    android:text="This channel has no content"
                     android:textColor="@color/black"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 

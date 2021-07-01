@@ -184,7 +184,6 @@ public class NoticeActivity extends AppCompatActivity {
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(NoticeActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
 
                 if(result.getResult().equals("success")) {
                 finish();

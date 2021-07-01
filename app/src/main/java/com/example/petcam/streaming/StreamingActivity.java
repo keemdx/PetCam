@@ -266,7 +266,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
                 if(mEditMessage.isFocused()) {
                     if(s.length() > 0) { // 메시지 전송 가능한 상태
-                        mSend.setText("전송");
+                        mSend.setText("Send");
                         mSend.setClickable(true);
                     } else {
                         mSend.setText("···");
@@ -538,8 +538,8 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     // 방송 종료 시 한번 더 확인하는 용도의 다이알로그
     public void alertDialog(View view) {
         AlertDialog.Builder alert = new AlertDialog.Builder(StreamingActivity.this);
-        alert.setMessage("라이브 방송을 끝내시겠어요?");
-        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        alert.setMessage("Are you sure you want to end your live video?");
+        alert.setPositiveButton("END", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -574,7 +574,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 }
             }
         });
-        alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel(); // 취소

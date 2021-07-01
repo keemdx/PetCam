@@ -76,7 +76,7 @@
             android:ellipsize="end"
             android:fontFamily="sans-serif"
             android:maxLines="5"
-            android:text="쿠마랑 나들이🤎"
+            android:text="Hi there🤎"
             android:textColor="#000"
             android:textSize="14sp"
             android:textStyle="bold" />

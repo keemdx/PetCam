@@ -110,23 +110,23 @@ public class LoginActivity extends AppCompatActivity {
         View focusView = null;
 
         // 패스워드의 유효성 검사
-        if (password.isEmpty()) { // 비밀번호 칸이 비어있는 경우
-            mPassword.setError("비밀번호를 입력하세요.");
+        if (password.isEmpty()) {
+            mPassword.setError("Please enter your password");
             focusView = mPassword;
             cancel = true;
-        } else if (!isPasswordValid(password)) { // 비밀번호가 8 이하인 경우
-            mPassword.setError("영문, 숫자 혼합하여 6~10자리 이내");
+        } else if (!isPasswordValid(password)) {
+            mPassword.setError("Please enter your password with 6-10 digits including number and alphabet");
             focusView = mPassword;
             cancel = true;
         }
 
         // 이메일의 유효성 검사
         if (email.isEmpty()) { // 이메일 칸이 비어있는 경우
-            mEmail.setError("이메일을 입력하세요.");
+            mEmail.setError("Please enter your email");
             focusView = mEmail;
             cancel = true;
         } else if (!isEmailValid(email)) { // 이메일 형식이 아닌 경우
-            mEmail.setError("올바른 이메일 주소를 입력하세요.");
+            mEmail.setError("Please enter a valid email address");
             focusView = mEmail;
             cancel = true;
         }

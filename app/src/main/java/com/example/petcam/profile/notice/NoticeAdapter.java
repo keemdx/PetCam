@@ -1,5 +1,6 @@
 package com.example.petcam.profile.notice;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -28,10 +29,12 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
 
     private List<NoticeItem> mList;
     private Context mContext;
+    private Activity mActivity;
 
-    public NoticeAdapter(List<NoticeItem> mList, Context mContext) {
+    public NoticeAdapter(List<NoticeItem> mList, Context mContext, Activity mActivity) {
         this.mList = mList;
         this.mContext = mContext;
+        this.mActivity = mActivity;
     }
 
     @NonNull
@@ -70,6 +73,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
                 Intent intent = new Intent(mContext, NoticeDetailActivity.class);
                 intent.putExtra(NOTICE_ID, mList.get(position).getNotice_id());
                 mContext.startActivity(intent);
+                mActivity.overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
             }
         });
     }

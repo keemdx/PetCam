@@ -285,7 +285,6 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(NoticeDetailActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
 
                 if(result.getResult().equals("success")) {
                 mComment.setText("");
@@ -313,9 +312,9 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
 
         // 공지사항 상단 고정 관련 메뉴 생성
         if(noticePin.equals("true")){
-            menu.add(0, 0, 0, "상단 고정 해제");
+            menu.add(0, 0, 0, "Unpin");
         } else {
-            menu.add(0, 1, 0, "상단 고정");
+            menu.add(0, 1, 0, "Pin");
         }
 
             // 수정, 삭제 기능 메뉴
@@ -349,14 +348,14 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
                         // 글 삭제
                         case R.id.menu_delete:
                             AlertDialog.Builder alert = new AlertDialog.Builder(NoticeDetailActivity.this);
-                            alert.setMessage("정말 삭제하시겠어요?");
-                            alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            alert.setMessage("Are you sure?");
+                            alert.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                      removeNotice();
                                 }
                             });
-                            alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.cancel();
@@ -385,7 +384,6 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
                 public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                     // 정상적으로 네트워크 통신 완료
                     ResultModel result = response.body();
-                    Toast.makeText(NoticeDetailActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     // 성공적으로 DB 내 공지사항 삭제를 완료했을 경우 액티비티를 닫는다.
                     if(result.getResult().equals("success")) {
                        finish();
@@ -411,7 +409,6 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(NoticeDetailActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
 
                 if(result.getResult().equals("success")) {
                     Intent intent = getIntent();
@@ -449,7 +446,7 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
                         startActivity(intent);
                         break;
                     case R.id.menu_delete:
-                        alertDialog(position, commentID); // 삭제하시겠습니까? 팝업창
+                        removeComment(position, Integer.parseInt(commentID));
                         break;
                     default:
                         break;
@@ -462,27 +459,6 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
 
     }
     // =========================================================================================================
-    // 삭제 확인 팝업 다이알로그
-    public void alertDialog(final int position, String commentID) {
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setMessage("선택한 댓글을 삭제하시겠습니까?");
-        alert.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                removeComment(position, Integer.parseInt(commentID));
-            }
-        });
-        alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        alert.create().show();
-    }
-
-    // =========================================================================================================
     // DB 연결 후 해당 댓글 삭제
     private void removeComment(int position, int commentID) {
 
@@ -492,7 +468,6 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(getApplicationContext(), result.getMessage(), Toast.LENGTH_SHORT).show();
                 // 성공적으로 DB 내 공지사항 삭제를 완료했을 경우 액티비티를 닫는다.
                 if(result.getResult().equals("success")) {
                     //arraylist에서 해당 인덱스의 아이템 객체를 지워주고
@@ -515,5 +490,11 @@ public class NoticeDetailActivity extends AppCompatActivity implements NoticeCom
             }
         });
     }
+
     // =========================================================================================================
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.anim_slide_in_left, R.anim.anim_slide_out_right);
+    }
 }

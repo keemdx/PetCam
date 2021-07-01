@@ -128,7 +128,7 @@
                             android:layout_marginEnd="10dp"
                             android:background="@drawable/bg_gray_stroke_corner"
                             android:ems="10"
-                            android:hint="메시지 보내기..."
+                            android:hint="Enter your message"
                             android:inputType="text|textMultiLine"
                             android:maxLines="100"
                             android:paddingLeft="20dp"
@@ -176,13 +176,13 @@
                             android:id="@+id/tv_chat_users"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="26dp"
                             android:layout_marginStart="22dp"
-                            android:text="멤버"
+                            android:layout_marginTop="26dp"
+                            android:text="Members"
                             android:textColor="#222"
                             android:textSize="15sp"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_invite"
                     android:layout_width="wrap_content"
@@ -206,12 +206,12 @@
                             android:id="@+id/tv_invite"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="멤버 초대"
+                            android:text="Invite"
                             android:textColor="@color/colorPrimary"
                             android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <androidx.recyclerview.widget.RecyclerView

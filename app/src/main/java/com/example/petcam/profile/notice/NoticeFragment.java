@@ -128,7 +128,7 @@ public class NoticeFragment extends Fragment {
                     if(!mFixTopDataList.isEmpty()) {
                         layout_none.setVisibility(View.GONE);
                     }
-                    FixTopNoticeAdapter fixTopNoticeAdapter = new FixTopNoticeAdapter(mFixTopDataList, getActivity());
+                    FixTopNoticeAdapter fixTopNoticeAdapter = new FixTopNoticeAdapter(mFixTopDataList, getActivity(), getActivity());
                     rv_fix_top_notice.setAdapter(fixTopNoticeAdapter);
                     fixTopNoticeAdapter.notifyDataSetChanged();
                 }
@@ -154,7 +154,7 @@ public class NoticeFragment extends Fragment {
                     if(!mDataList.isEmpty()) {
                         layout_none.setVisibility(View.GONE);
                     }
-                    NoticeAdapter noticeAdapter = new NoticeAdapter(mDataList, getActivity());
+                    NoticeAdapter noticeAdapter = new NoticeAdapter(mDataList, getActivity(), getActivity());
                     rv_notice.setAdapter(noticeAdapter);
                     noticeAdapter.notifyDataSetChanged();
                 }

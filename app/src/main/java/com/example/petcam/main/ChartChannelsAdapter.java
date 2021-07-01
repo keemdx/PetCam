@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,8 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.petcam.function.App.CHANNEL_ID;
+import static com.example.petcam.function.App.LOGIN_STATUS;
+import static com.example.petcam.function.App.USER_UID;
 
 
 public class ChartChannelsAdapter extends RecyclerView.Adapter<ChartChannelsAdapter.ViewHolder> {
@@ -30,6 +33,7 @@ public class ChartChannelsAdapter extends RecyclerView.Adapter<ChartChannelsAdap
     private List<ChartChannelsItem> mList;
     private Context mContext;
     private Activity mActivity;
+    private SharedPreferences pref;
 
 
     public ChartChannelsAdapter(List<ChartChannelsItem> mList, Context mContext, Activity mActivity) {
@@ -61,7 +65,11 @@ public class ChartChannelsAdapter extends RecyclerView.Adapter<ChartChannelsAdap
         // 유저 닉네임
         holder.tv_name.setText(item.getUserName());
 
-        holder.tv_fans.setText(item.getCnt() + " 팬");
+        if(item.getCnt() <= 1) {
+            holder.tv_fans.setText(item.getCnt() + " fan");
+        } else {
+            holder.tv_fans.setText(item.getCnt() + " fans");
+        }
 
         // 프로필 이미지가 등록되어 있는지 여부 확인
         if (item.getUserProfileImage() == null) {
@@ -76,10 +84,17 @@ public class ChartChannelsAdapter extends RecyclerView.Adapter<ChartChannelsAdap
         holder.cv_user_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ChannelActivity.class);
-                intent.putExtra(CHANNEL_ID, item.getUserId());
-                mContext.startActivity(intent);
-                mActivity.overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+
+                // 저장된 유저 정보 가져오기
+                pref = mActivity.getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
+                String userID = pref.getString(USER_UID, ""); // 유저 프로필 이미지
+
+                if(!item.getUserId().equals(userID)) {
+                    Intent intent = new Intent(mContext, ChannelActivity.class);
+                    intent.putExtra(CHANNEL_ID, item.getUserId());
+                    mContext.startActivity(intent);
+                    mActivity.overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
+                }
             }
         });
     }

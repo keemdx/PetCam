@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
                 case R.id.iv_message:
                     Intent intent = new Intent(getContext(), ChatroomActivity.class);
                     startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_not_move);
+                    getActivity().overridePendingTransition(R.anim.anim_slide_in_right, R.anim.anim_slide_out_left);
                     break;
 
                 // 스트리머 검색 액티비티로 넘어간다.

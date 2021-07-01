@@ -30,7 +30,7 @@
                 <ImageView
                     android:id="@+id/imageView4"
                     android:layout_width="65dp"
-                    android:layout_height="58dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/ic_3circles" />
 
@@ -39,9 +39,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="등록된 글이 없습니다."
+                    android:text="This channel has no content"
                     android:textColor="@color/black"
-                    android:textSize="13sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -68,11 +68,11 @@
             android:layout_height="35dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/bg_gray_all_round_corner"
             android:ems="10"
-            android:hint="최대 100자"
+            android:hint="Enter comment"
             android:inputType="text"
             android:paddingLeft="20dp"
             android:textSize="13sp"
@@ -85,9 +85,11 @@
             android:id="@+id/tv_add_fanboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="전송"
+            android:layout_marginEnd="18dp"
+            android:text="Send"
+            android:textColor="@color/darkGray"
             android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/et_fanboard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/et_fanboard" />
@@ -119,7 +121,7 @@
             android:layout_height="35dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/bg_gray_all_round_corner"
             android:ems="10"
@@ -136,9 +138,11 @@
             android:id="@+id/tv_add_fanboard_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="14dp"
-            android:text="수정"
+            android:layout_marginEnd="12dp"
+            android:text="Edit"
+            android:textColor="@color/darkGray"
             android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/et_fanboard_edit"
             app:layout_constraintEnd_toStartOf="@+id/iv_edit_close"
             app:layout_constraintTop_toTopOf="@+id/et_fanboard_edit" />

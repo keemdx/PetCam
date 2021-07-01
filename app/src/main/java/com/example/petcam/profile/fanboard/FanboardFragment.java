@@ -245,7 +245,6 @@ public class FanboardFragment extends Fragment implements FanboardAdapter.OnList
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT).show();
 
                 if(result.getResult().equals("success")) {
                     imm.hideSoftInputFromWindow(getView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -275,7 +274,6 @@ public class FanboardFragment extends Fragment implements FanboardAdapter.OnList
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT).show();
 
                 if(result.getResult().equals("success")) {
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -309,7 +307,7 @@ public class FanboardFragment extends Fragment implements FanboardAdapter.OnList
 
         // 공지사항 상단 고정 관련 메뉴 생성
         if(writerID.equals(myID)){
-            menu.add(0, 0, 0, "수정");
+            menu.add(0, 0, 0, "Edit");
         }
 
         // 수정, 삭제 기능 메뉴
@@ -349,14 +347,14 @@ public class FanboardFragment extends Fragment implements FanboardAdapter.OnList
     public void alertDialog(final int position, String contentID) {
 
         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        alert.setMessage("선택한 글을 삭제하시겠습니까?");
-        alert.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+        alert.setMessage("Are you sure?");
+        alert.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 removeComment(position, contentID);
             }
         });
-        alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -375,7 +373,6 @@ public class FanboardFragment extends Fragment implements FanboardAdapter.OnList
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                Toast.makeText(getActivity(), result.getMessage(), Toast.LENGTH_SHORT).show();
                 // 성공적으로 DB 내 공지사항 삭제를 완료했을 경우 액티비티를 닫는다.
                 if(result.getResult().equals("success")) {
                     //arraylist에서 해당 인덱스의 아이템 객체를 지워주고

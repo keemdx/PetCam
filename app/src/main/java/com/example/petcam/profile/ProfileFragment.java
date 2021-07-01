@@ -135,9 +135,9 @@ public class ProfileFragment extends Fragment {
 
         // ViewPagerAdapter을 사용하여 Fragment를 연결
         ChannelViewPagerAdapter viewPagerAdapter = new ChannelViewPagerAdapter(getChildFragmentManager(), 0);
-        viewPagerAdapter.addFragment(noticeFragment, "공지");
-        viewPagerAdapter.addFragment(VODFragment, "동영상");
-        viewPagerAdapter.addFragment(fanboardFragment, "팬보드");
+        viewPagerAdapter.addFragment(noticeFragment, "Notice");
+        viewPagerAdapter.addFragment(VODFragment, "Videos");
+        viewPagerAdapter.addFragment(fanboardFragment, "Fan Board");
         viewPager.setAdapter(viewPagerAdapter);
 
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기

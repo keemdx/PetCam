@@ -125,7 +125,7 @@ public class SearchUserActivity extends AppCompatActivity implements SearchUserA
         roomID = intent.getStringExtra(ROOM_ID);
 
         if(roomID != null){
-            mUserTitle.setText("초대하기");
+            mUserTitle.setText("Invite");
         }
 
         // 메시지 전송 버튼 작동하지 않도록 설정

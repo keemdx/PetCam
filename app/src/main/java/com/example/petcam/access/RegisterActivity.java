@@ -112,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // 텍스트뷰 해당 텍스트에 링크 걸기
         mLinkify = (TextView) findViewById(R.id.tv_linkify); // 서비스 이용 약관
-        String text = "회원가입 시 서비스 이용 약관, 개인정보 보호 정책에 동의합니다.";
+        String text = "I agree to the Terms of Service and Privacy Policy";
         mLinkify.setText(text);
 
         Linkify.TransformFilter mTransform = new Linkify.TransformFilter() {
@@ -122,8 +122,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         };
 
-        Pattern pattern1 = Pattern.compile("서비스 이용 약관");
-        Pattern pattern2 = Pattern.compile("개인정보 보호 정책");
+        Pattern pattern1 = Pattern.compile("Terms of Service");
+        Pattern pattern2 = Pattern.compile("Privacy Policy");
 
         /** 개인 프로젝트이므로 링크는 임의로 사용 **/
         Linkify.addLinks(mLinkify, pattern1, "https://play.google.com/intl/ko_kr/about/play-terms/", null, mTransform);
@@ -177,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
         View focusView = null;
 
         if (key.isEmpty()) { // 인증번호 칸이 비어있을 경우
-            mAuthKey.setError("인증번호를 입력하세요.");
+            mAuthKey.setError("Please enter a verification code");
             focusView = mAuthKey;
             cancel = true;
         }
@@ -207,29 +207,29 @@ public class RegisterActivity extends AppCompatActivity {
 
         // 패스워드의 유효성 검사
         if (password.isEmpty()) {
-            mPassword.setError("비밀번호를 입력하세요.");
+            mPassword.setError("Please enter your password");
             focusView = mPassword;
             cancel = true;
         } else if (!isPasswordValid(password)) {
-            mPassword.setError("영문, 숫자 혼합하여 6~10자리 이내");
+            mPassword.setError("Please enter your password with 6-10 digits including number and alphabet");
             focusView = mPassword;
             cancel = true;
         }
 
         // 이메일의 유효성 검사
         if (email.isEmpty()) {
-            mEmail.setError("이메일을 입력하세요.");
+            mEmail.setError("Please enter your email");
             focusView = mEmail;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmail.setError("올바른 이메일 주소를 입력하세요.");
+            mEmail.setError("Please enter a valid email address");
             focusView = mEmail;
             cancel = true;
         }
 
         // 이름의 유효성 검사
         if (name.isEmpty()) {
-            mName.setError("닉네임을 입력하세요.");
+            mName.setError("Please enter your nickname");
             focusView = mName;
             cancel = true;
         }
@@ -250,11 +250,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         // 이메일의 유효성 검사
         if (userInputEmail.isEmpty()) {
-            mEmail.setError("이메일을 입력하세요.");
+            mEmail.setError("Please enter your email");
             focusView = mEmail;
             cancel = true;
         } else if (!isEmailValid(userInputEmail)) {
-            mEmail.setError("올바른 이메일 주소를 입력하세요.");
+            mEmail.setError("Please enter a valid email address");
             focusView = mEmail;
             cancel = true;
         }
@@ -301,7 +301,6 @@ public class RegisterActivity extends AppCompatActivity {
                 ResultModel result = response.body();
 
                 if(result.getResult().equals("success")) {
-                    Toast.makeText(RegisterActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     authDialog.show(); // 인증 다이알로그를 띄운다.
                     mDialogUserEmail.setText(email); // 사용자가 입력한 이메일을 보여준다.
                 }
@@ -327,14 +326,12 @@ public class RegisterActivity extends AppCompatActivity {
                 ResultModel result = response.body();
 
                 if(result.getResult().equals("success")) {
-                    // 인증이 성공적으로 완료되었을 경우,
-                    Toast.makeText(RegisterActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     // 인증 완료 후 다이알로그 종료
                     authDialog.dismiss();
                     // 인증하기 -> 인증 완료로 버튼 텍스트 변경
                     colorStateList = getResources().getColorStateList(R.color.darkGray);
                     mAuthDialogButton.setStrokeColor(colorStateList);
-                    mAuthDialogButton.setText("인증 완료");
+                    mAuthDialogButton.setText("Verified");
                     mAuthDialogButton.setEnabled(false);
                     mAuthDialogButton.setTextColor(Color.parseColor("#A8A8A8"));
 

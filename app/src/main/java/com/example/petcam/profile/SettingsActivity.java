@@ -65,8 +65,8 @@ public class SettingsActivity extends AppCompatActivity {
     // 로그아웃 - 팝업 다이알로그
     public void alertDialog(View view) {
         AlertDialog.Builder alert = new AlertDialog.Builder(SettingsActivity.this);
-        alert.setMessage("정말 로그아웃하시겠습니까?");
-        alert.setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
+        alert.setMessage("Are you sure?");
+        alert.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 pref = getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
@@ -77,7 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
                 startWelcomeActivity();
             }
         });
-        alert.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel(); // 취소
@@ -88,7 +88,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     // 로그아웃 후 인트로 페이지로 이동
     private void startWelcomeActivity() {
-        Toast.makeText(SettingsActivity.this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(SettingsActivity.this, "Logout", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(SettingsActivity.this, IntroActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
