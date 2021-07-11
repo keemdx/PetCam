@@ -324,9 +324,12 @@ public class ChattingActivity extends AppCompatActivity {
                         if(invite_user_name.length() > 1) {
                             String inviteMessage = sender_name + " invited " + invite_user_name;
                             mList.add(new ChattingItem(null, null, sender_name, null, inviteMessage, START_ROOM));
-                            saveMessage(START_ROOM, chatroomNo, inviteMessage, send_time);
-                            // 보낸 유저와 현재 유저가 같은 경우 (자신인 경우)
-                        } else if (!sender_uid.equals(userID)) {
+                            if (sender_name.equals(userName)) {
+                                saveMessage(START_ROOM, chatroomNo, inviteMessage, send_time);
+                            }
+                            getChatroomInfo(chatroomNo, userID);
+                        }
+                        if (!sender_uid.equals(userID) && invite_user_name.length() < 2) { // 본인이 보낸 메시지가 아닌 경우,
                             if (status.equals(START_ROOM)) { // 처음 들어온 유저의 경우 모두에게 날짜를 보낸다.
                                     mList.add(new ChattingItem(null, null, sender_name, null, null, DATE));
                                     mList.add(new ChattingItem(time, null, sender_name, null, null, START_ROOM));
@@ -338,11 +341,11 @@ public class ChattingActivity extends AppCompatActivity {
                             } else if (status.equals(CHATTING) && message_text != null) { // 정상적인 메시지일 경우, (공지X)
                                 mList.add(new ChattingItem(time, sender_uid, sender_name, sender_profile_image, message_text, CHATTING));
                             }
-                            adapter = new ChattingAdapter(mList, ChattingActivity.this, userID);
-                            mChatRecyclerView.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
-                            focusCurrentMessage(); // 최신 메시지 보여주기
                         }
+                        adapter = new ChattingAdapter(mList, ChattingActivity.this, userID);
+                        mChatRecyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        focusCurrentMessage(); // 최신 메시지 보여주기
                     }
 
                     } catch(JSONException e){
