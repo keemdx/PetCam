@@ -2,7 +2,9 @@ package com.example.petcam.network;
 
 import com.google.gson.annotations.SerializedName;
 
-/** 결과를 받을 모델 **/
+/**
+ * 결과를 받을 모델
+ **/
 
 public class ResultModel {
     private String result;

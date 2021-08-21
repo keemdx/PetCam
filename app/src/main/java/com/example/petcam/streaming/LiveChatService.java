@@ -15,6 +15,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import static com.example.petcam.function.App.BROADCAST_LIVE_MSG;
 import static com.example.petcam.function.App.CHAT_DATA;
@@ -58,7 +59,7 @@ public class LiveChatService extends Service {
             try {
                 socketChannel = SocketChannel.open();
                 socketChannel.configureBlocking(true);
-                socketChannel.connect(new InetSocketAddress (host, port));
+                socketChannel.connect(new InetSocketAddress(host, port));
                 Log.d(TAG, "Connect client (socket 정보) : " + socketChannel.socket());
             } catch (IOException e) {
                 Log.e(TAG, "Connect error : " + e.getMessage());
@@ -73,7 +74,7 @@ public class LiveChatService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.d(TAG, "[onStartCommand()] Start . . .");
-        if(intent != null) {
+        if (intent != null) {
             String command = intent.getStringExtra(CHAT_DATA); // StreamingActivity 에서 받아온 intent (message)
 
             if (command == null) {
@@ -100,7 +101,7 @@ public class LiveChatService extends Service {
                 socketChannel
                         .socket()
                         .getOutputStream()
-                        .write(strings[0].getBytes("UTF-8")); // 서버로 전달
+                        .write(strings[0].getBytes(StandardCharsets.UTF_8)); // 서버로 전달
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -111,21 +112,21 @@ public class LiveChatService extends Service {
     // =========================================================================================================
 
     // receive message
-    class MsgReceiver extends Thread{
+    class MsgReceiver extends Thread {
         Handler handler = new Handler();
 
-        public void run(){
-            while(true){
+        public void run() {
+            while (true) {
                 ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                 try {
                     int readByteCount = socketChannel.read(byteBuffer);
-                    if(readByteCount==-1){
+                    if (readByteCount == -1) {
                         throw new IOException();
                     }
                     byteBuffer.flip();
-                    Charset charset = Charset.forName("UTF-8");
+                    Charset charset = StandardCharsets.UTF_8;
                     String receiveData = charset.decode(byteBuffer).toString();
-                    JSONObject jsonObject = new JSONObject(new String(receiveData)); // 받아온 String 을 JSONObject 로 저장
+                    JSONObject jsonObject = new JSONObject(receiveData); // 받아온 String 을 JSONObject 로 저장
                     String type = jsonObject.getString("type"); // 메시지 분류를 위한 Type 가져오기
 
                     handler.post(new Runnable() {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".access.RegisterActivity">
+    tools:context=".ui.access.RegisterActivity">
 
     <ImageView
         android:id="@+id/iv_backToIntro"

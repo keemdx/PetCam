@@ -63,9 +63,9 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 
 /**
  * @author Dohyun(Dani)
- * @since 2021/06/15
  * @comment 실시간 스트리밍 영상을 재생하기 위한 액티비티입니다. (ExoPlayer 사용)
-**/
+ * @since 2021/06/15
+ **/
 
 public class StreamingPlayerActivity extends AppCompatActivity {
 
@@ -137,8 +137,8 @@ public class StreamingPlayerActivity extends AppCompatActivity {
         // 저장된 유저 정보 가져오기
         pref = getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
         userID = pref.getString(USER_UID, ""); // 유저 프로필 아이디
-        userPhoto = pref.getString(USER_IMAGE,""); // 유저 프로필 이미지
-        userName = pref.getString(USER_NAME,""); // 유저 닉네임
+        userPhoto = pref.getString(USER_IMAGE, ""); // 유저 프로필 이미지
+        userName = pref.getString(USER_NAME, ""); // 유저 닉네임
 
         // 리사이클러뷰에서 받은 룸 아이디 가져오기
         Intent intent = getIntent();
@@ -162,8 +162,8 @@ public class StreamingPlayerActivity extends AppCompatActivity {
         mEditMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                if(mEditMessage.isFocused()) {
-                    if(s.length() > 0) { // 메시지 전송 가능한 상태
+                if (mEditMessage.isFocused()) {
+                    if (s.length() > 0) { // 메시지 전송 가능한 상태
                         mSend.setText("전송");
                         mSend.setClickable(true);
                     } else {
@@ -172,6 +172,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -442,6 +443,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
             }
+
             // 통신이 실패했을 경우 호출된다.
             @Override
             public void onFailure(Call<ResultModel> call, Throwable t) {
@@ -467,6 +469,7 @@ public class StreamingPlayerActivity extends AppCompatActivity {
                 viewer = Integer.parseInt(result.getMessage());
                 mViewerCount.setText(result.getMessage()); // 뷰어 수 설정
             }
+
             // 통신이 실패했을 경우 호출된다.
             @Override
             public void onFailure(Call<ResultModel> call, Throwable t) {

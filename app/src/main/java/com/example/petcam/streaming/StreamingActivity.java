@@ -97,9 +97,9 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 
 /**
  * @author Dohyun(Dani)
- * @since 2021/06/15
  * @comment 실시간 스트리밍 방송을 송출하기 위한 액티비티입니다.
-**/
+ * @since 2021/06/15
+ **/
 
 public class StreamingActivity extends AppCompatActivity implements ConnectCheckerRtmp, SurfaceHolder.Callback {
 
@@ -135,7 +135,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
     public static String OFF = "OFF";
 
     // 방송 녹화 관련 (LIVE TO VOD)
-    private File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/VOD"); // VOD 저장할 경로 설정
+    private final File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/VOD"); // VOD 저장할 경로 설정
     private String timeStamp;
 
     private ServiceApi mServiceApi;
@@ -230,8 +230,8 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         // 저장된 유저 정보 가져오기
         pref = getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
         userID = pref.getString(USER_UID, ""); // 유저 프로필 아이디
-        userPhoto = pref.getString(USER_IMAGE,""); // 유저 프로필 이미지
-        userName = pref.getString(USER_NAME,""); // 유저 닉네임
+        userPhoto = pref.getString(USER_IMAGE, ""); // 유저 프로필 이미지
+        userName = pref.getString(USER_NAME, ""); // 유저 닉네임
 
         // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
         findViewById(R.id.iv_finish).setOnClickListener(onClickListener);
@@ -264,8 +264,8 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         mEditMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-                if(mEditMessage.isFocused()) {
-                    if(s.length() > 0) { // 메시지 전송 가능한 상태
+                if (mEditMessage.isFocused()) {
+                    if (s.length() > 0) { // 메시지 전송 가능한 상태
                         mSend.setText("Send");
                         mSend.setClickable(true);
                     } else {
@@ -274,6 +274,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                     }
                 }
             }
+
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -476,7 +477,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
                 try {
                     liveTime = (String) chronometer.getText(); // 현재 방송 시간 가져오기
-                    liveTime = liveTime.replaceAll(":",""); // 0001, 0002 ...
+                    liveTime = liveTime.replaceAll(":", ""); // 0001, 0002 ...
 
                     JSONObject object = new JSONObject();
 
@@ -620,7 +621,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
         String streamerID = userID; // 스트리머 UID
         String roomTitle = mRoomTitle.getText().toString(); // 룸 생성 시 입력한 타이틀
         String roomStatus = ON; // 현재 방송 상태
-        String createAt =  String.valueOf(System.currentTimeMillis());
+        String createAt = String.valueOf(System.currentTimeMillis());
         int viewer = 0; // 시청자 수 (1 이상일 경우만 표시)
 
         mServiceApi.createStreamingRoom(roomID, streamerID, roomTitle, roomStatus, viewer, createAt).enqueue(new Callback<ResultModel>() {
@@ -685,7 +686,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                         } catch (Throwable t) {
 
                         }
-                        if(mCount.getVisibility() == View.VISIBLE) {
+                        if (mCount.getVisibility() == View.VISIBLE) {
                             mCount.setVisibility(View.GONE);
                         }
                     }
@@ -716,7 +717,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
     // Thumbnail 을 위해 SurfaceView 스크린샷 찍어서 저장하기
 
-    public void screenShot(){ // SurfaceView 스크린샷 찍기
+    public void screenShot() { // SurfaceView 스크린샷 찍기
 
         // SurfaceView 를 BitMap 으로 복사한다. (PixelCopy 사용)
         Bitmap bitmap = Bitmap.createBitmap(mSurfaceView.getWidth(), mSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
@@ -732,12 +733,12 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                     String fileName = "image_screenshot_" + System.currentTimeMillis();
                     File file = new File(Environment.getExternalStorageDirectory(), fileName);
                     FileOutputStream os = null;
-                    try{
+                    try {
                         os = new FileOutputStream(file);
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);   // 비트맵을 PNG 파일로 변환한다.
                         os.close();
                         uploadImageFile(file, fileName); // 이미지 파일 업로드
-                    }catch (IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
 
@@ -768,13 +769,13 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             public void onStateChanged(int id, TransferState state) {
                 Log.d(TAG, "onStateChanged: " + id + ", " + state.toString());
                 String streamingThumbnail = STREAMING_URL + fileName; // 스토리지에 저장 후 수정된 이미지 url
-                saveThumbnail(streamingThumbnail , roomID); // 찍은 스크린샷 저장 (리사이클러뷰에 뿌려주기 위함)
+                saveThumbnail(streamingThumbnail, roomID); // 찍은 스크린샷 저장 (리사이클러뷰에 뿌려주기 위함)
             }
 
             @Override
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                 float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
-                int percentDone = (int)percentDonef;
+                int percentDone = (int) percentDonef;
                 Log.d(TAG, "ID:" + id + " bytesCurrent: " + bytesCurrent + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
             }
 
@@ -869,7 +870,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
             public void onResponse(Call<ResultModel> call, Response<ResultModel> response) {
                 // 정상적으로 네트워크 통신 완료
                 ResultModel result = response.body();
-                if(result.getResult().equals("success")) {
+                if (result.getResult().equals("success")) {
                     Log.d(ACTIVITY_SERVICE, "채팅 저장 성공 : " + result.getMessage());
                 }
             }
@@ -893,7 +894,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                 String type = intent.getStringExtra("type");
                 String room_id = intent.getStringExtra("room_id");
 
-                if(room_id.equals(roomID)) {
+                if (room_id.equals(roomID)) {
                     // 일반적인 메세지를 받았을 때 실행한다.
                     if (type.equals("message")) {
                         Log.d(TAG, "message 작동");
@@ -914,7 +915,7 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
                         liveTime = intent.getStringExtra("liveTime");
                     }
                 }
-                }
+            }
         };
         registerReceiver(broadcastReceiver, intentfilter);
         Log.d(TAG, "broadcast receiver 를 시작합니다.");
@@ -949,6 +950,6 @@ public class StreamingActivity extends AppCompatActivity implements ConnectCheck
 
     // 마지막 RecyclerView 에 포커싱 (최신 메시지 보여주기)
     public void focusCurrentMessage() {
-            mLiveChatRV.scrollToPosition(adapter.getItemCount() - 1);
+        mLiveChatRV.scrollToPosition(adapter.getItemCount() - 1);
     }
 }

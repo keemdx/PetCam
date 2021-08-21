@@ -2,7 +2,6 @@ package com.example.petcam.streaming;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.petcam.R;
-import com.example.petcam.main.MainActivity;
+import com.example.petcam.ui.main.MainActivity;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
 
@@ -45,7 +44,7 @@ public class StreamingResultActivity extends AppCompatActivity {
         public void onClick(View view) {
 
             switch (view.getId()) {
-                case R.id.btn_finish : // 확인 버튼 (종료)
+                case R.id.btn_finish: // 확인 버튼 (종료)
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish();
@@ -103,12 +102,12 @@ public class StreamingResultActivity extends AppCompatActivity {
                             .load(mDataList.get(0).getThumbnail_image())
                             .into(mBackground);
 
-                    if(mDataList.get(0).getViewer_image() == null) {
+                    if (mDataList.get(0).getViewer_image() == null) {
                         mViewerCount.setText("0 viewer");
                     } else {
                         mViewerCount.setText((mDataList.size()) + " viewers");
-                        for(int i = 0; i < mDataList.size(); i++) {
-                            String getViewerPhoto  = mDataList.get(i).getViewer_image();
+                        for (int i = 0; i < mDataList.size(); i++) {
+                            String getViewerPhoto = mDataList.get(i).getViewer_image();
                             mList.add(new ViewersItem(getViewerPhoto));
                         }
                         mViewersRV.setLayoutManager(new GridLayoutManager(StreamingResultActivity.this, mDataList.size()));

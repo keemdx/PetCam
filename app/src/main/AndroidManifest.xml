@@ -32,37 +32,37 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".main.SearchActivity"/>
-        <activity android:name=".profile.FollowListActivity" />
-        <activity android:name=".profile.ChannelActivity" />
+        <activity android:name=".ui.main.SearchActivity"/>
+        <activity android:name=".ui.profile.FollowListActivity" />
+        <activity android:name=".ui.profile.ChannelActivity" />
 
         <service
-            android:name=".chatting.ChattingService"
+            android:name=".ui.chatting.ChattingService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".chatting.SearchUserActivity" />
-        <activity android:name=".chatting.ChatroomActivity" />
-        <activity android:name=".chatting.ChattingActivity" />
-        <activity android:name=".profile.notice.EditNoticeActivity" />
-        <activity android:name=".profile.notice.EditCommentActivity" />
-        <activity android:name=".profile.notice.NoticeDetailActivity" />
-        <activity android:name=".profile.notice.NoticeActivity" />
+        <activity android:name=".ui.chatting.SearchUserActivity" />
+        <activity android:name=".ui.chatting.ChatroomActivity" />
+        <activity android:name=".ui.chatting.ChattingActivity" />
+        <activity android:name=".ui.profile.notice.EditNoticeActivity" />
+        <activity android:name=".ui.profile.notice.EditCommentActivity" />
+        <activity android:name=".ui.profile.notice.NoticeDetailActivity" />
+        <activity android:name=".ui.profile.notice.NoticeActivity" />
         <activity
-            android:name=".main.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".access.IntroActivity">
+        <activity android:name=".ui.access.IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".access.RegisterActivity" />
-        <activity android:name=".access.LoginActivity" />
-        <activity android:name=".access.ForgotPasswordActivity" />
-        <activity android:name=".profile.SettingsActivity" />
-        <activity android:name=".profile.EditProfileActivity" />
+        <activity android:name=".ui.access.RegisterActivity" />
+        <activity android:name=".ui.access.LoginActivity" />
+        <activity android:name=".ui.access.ForgotPasswordActivity" />
+        <activity android:name=".ui.profile.SettingsActivity" />
+        <activity android:name=".ui.profile.EditProfileActivity" />
         <!-- Streaming Activity -->
         <activity android:name=".streaming.StreamingActivity" />
         <activity android:name=".streaming.StreamingPlayerActivity" />

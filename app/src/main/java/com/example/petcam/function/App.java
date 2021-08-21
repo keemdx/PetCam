@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Class: App
- *
+ * <p>
  * Comment
  * 이 클래스는 Application 클래스로 언제 어디서나 변수/메소드를 불러들일 수 있습니다.
  * 간편한 변수/메소드 접근을 위해 만들었습니다.
@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName;
 public class App extends Application {
 
     // 로그 찍을 때 필요한 TAG
-    public static String TAG ="LOG";
+    public static String TAG = "LOG";
 
     // 로그인한 유저를 전역에 사용할 변수
     public static String USER_ID; // 로그인한 유저의 고유 ID 번호
@@ -64,7 +64,9 @@ public class App extends Application {
     public static String NOTIFI_ROOM_ID = "notifi_room_id"; // 알림 클릭 시 전달되는 채팅 방 번호 ID
     public static String USER_INVITE = "user_invite"; // 초대한 유저 닉네임
 
-    /** 스트리밍 **/
+    /**
+     * 스트리밍
+     **/
     public static String STREAMING_ROOM_ID = "streaming_room_id"; // 채팅 방 번호 ID
     public static String BROADCAST_LIVE_MSG = "broadcast_live_message"; // 브로드캐스트 보내는 메시지
 

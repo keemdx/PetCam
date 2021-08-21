@@ -22,8 +22,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class LiveChatAdapter extends RecyclerView.Adapter<LiveChatAdapter.ViewHolder> {
 
 
-    private List<LiveChatItem> mList;
-    private Context mContext;
+    private final List<LiveChatItem> mList;
+    private final Context mContext;
 
 
     public LiveChatAdapter(List<LiveChatItem> mList, Context mContext) {

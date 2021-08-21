@@ -18,8 +18,8 @@ import java.util.List;
 
 public class ViewersAdapter extends RecyclerView.Adapter<ViewersAdapter.ViewHolder> {
 
-    private List<ViewersItem> mList;
-    private Context mContext;
+    private final List<ViewersItem> mList;
+    private final Context mContext;
 
     public ViewersAdapter(List<ViewersItem> mList, Context mContext) {
         this.mList = mList;

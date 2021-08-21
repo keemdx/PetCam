@@ -4,11 +4,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class LiveChatItem {
 
-    @SerializedName("userId") private String userId;
-    @SerializedName("userName") private String userName;
-    @SerializedName("userProfileImage") private String userProfileImage;
-    @SerializedName("message") private String message;
-    @SerializedName("liveTime") private String liveTime;
+    @SerializedName("userId")
+    private String userId;
+    @SerializedName("userName")
+    private String userName;
+    @SerializedName("userProfileImage")
+    private String userProfileImage;
+    @SerializedName("message")
+    private String message;
+    @SerializedName("liveTime")
+    private String liveTime;
 
     public LiveChatItem(String userId, String userName, String userProfileImage, String message) {
         this.userId = userId;

@@ -15,7 +15,9 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import com.example.petcam.R;
 
 
-/** 'X' 버튼을 포함하여 텍스트 초기화가 가능한 EditText 커스텀 **/
+/**
+ * 'X' 버튼을 포함하여 텍스트 초기화가 가능한 EditText 커스텀
+ **/
 public class ClearEditText extends AppCompatEditText implements TextWatcher, View.OnTouchListener, View.OnFocusChangeListener {
 
     private Drawable clearDrawable;
@@ -53,7 +55,7 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
         // 'X' 이미지 추가
         Drawable tempDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_delete);
         clearDrawable = DrawableCompat.wrap(tempDrawable);
-        DrawableCompat.setTintList(clearDrawable,getHintTextColors()); // hint 컬러와 동일한 색으로 설정
+        DrawableCompat.setTintList(clearDrawable, getHintTextColors()); // hint 컬러와 동일한 색으로 설정
         clearDrawable.setBounds(0, 0, clearDrawable.getIntrinsicWidth(), clearDrawable.getIntrinsicHeight());
 
         setClearIconVisible(false);
@@ -115,7 +117,6 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
     @Override
     public void afterTextChanged(Editable s) {
     }
-
 
 
     private void setClearIconVisible(boolean visible) {

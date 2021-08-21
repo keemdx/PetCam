@@ -1,7 +1,6 @@
 package com.example.petcam.streaming;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -14,7 +13,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.petcam.R;
-import com.example.petcam.main.MainActivity;
+import com.example.petcam.ui.main.MainActivity;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
 
@@ -42,7 +41,7 @@ public class StreamingFinishActivity extends AppCompatActivity {
         public void onClick(View view) {
 
             switch (view.getId()) {
-                case R.id.btn_finish : // 확인 버튼 (종료)
+                case R.id.btn_finish: // 확인 버튼 (종료)
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish();
@@ -92,7 +91,7 @@ public class StreamingFinishActivity extends AppCompatActivity {
                     mDataList = response.body();
                     Log.d(TAG, String.valueOf(mDataList.size()));
 
-                    if(mDataList.size() > 0) {
+                    if (mDataList.size() > 0) {
                         Log.d(TAG, mDataList.get(0).getThumbnail_image());
                         Glide.with(getApplicationContext())
                                 .load(mDataList.get(0).getThumbnail_image())

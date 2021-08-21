@@ -39,10 +39,9 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 
 /**
  * @author Dohyun(Dani)
- * @since 2021/06/26
  * @comment 녹화된 VOD 영상을 재생하기 위한 액티비티입니다. (ExoPlayer 사용)
- *
-**/
+ * @since 2021/06/26
+ **/
 
 public class VODPlayerActivity extends AppCompatActivity {
 
@@ -150,15 +149,15 @@ public class VODPlayerActivity extends AppCompatActivity {
                     try {
                         Thread.sleep(1000);
                     } catch (Exception e) {
-                        e.printStackTrace() ;
+                        e.printStackTrace();
                     }
-                    mHandler.post(runnable) ;
+                    mHandler.post(runnable);
                 }
             }
         }
 
-        NewRunnable nr = new NewRunnable() ;
-        Thread thread = new Thread(nr) ;
+        NewRunnable nr = new NewRunnable();
+        Thread thread = new Thread(nr);
         thread.start(); // 스레드 시작
     }
 
@@ -225,13 +224,13 @@ public class VODPlayerActivity extends AppCompatActivity {
     // =========================================================================================================
 
     // VOD 에 해당하는 채팅 가져오기 (DB)
-    private void getLiveChat(String roomID){
+    private void getLiveChat(String roomID) {
         Call<List<LiveChatItem>> call = mServiceApi.getLiveChat(roomID);
         call.enqueue(new Callback<List<LiveChatItem>>() {
             @Override
             public void onResponse(Call<List<LiveChatItem>> call, Response<List<LiveChatItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    mDataList= response.body();
+                    mDataList = response.body();
 
                     for (int i = 0; i < mDataList.size(); i++) {
 
@@ -244,7 +243,7 @@ public class VODPlayerActivity extends AppCompatActivity {
 
                         int intSendTime = Integer.parseInt(sendTime);
 
-                       // 객체화 후 해쉬맵에 채팅 시간(key), 채팅 데이터(value)를 저장한다.
+                        // 객체화 후 해쉬맵에 채팅 시간(key), 채팅 데이터(value)를 저장한다.
                         LiveChatItem liveChatItem = new LiveChatItem(senderID, senderName, senderImage, message);
                         hashMap.put(intSendTime, liveChatItem);
                     }
@@ -258,6 +257,7 @@ public class VODPlayerActivity extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<List<LiveChatItem>> call, Throwable t) {
                 Log.e("오류태그", t.getMessage());
@@ -277,15 +277,15 @@ public class VODPlayerActivity extends AppCompatActivity {
             int nowTime = msg.what; // 현재 시간 값
 
             // 해당 재생 시간에 추가할 채팅 목록이 없는 경우
-            if(hashMap.get(nowTime) == null) {
+            if (hashMap.get(nowTime) == null) {
                 playTime = nowTime;
 
             } else {  // 해당 재생 시간에 추가할 채팅 목록이 있는 경우
 
                 // 재생 중지 버튼을 클릭했을 경우
-                if(playTime == nowTime) {
+                if (playTime == nowTime) {
                     playTime = nowTime;
-                } else if(nowTime - playTime >= 2 || playTime - nowTime >= 2) { // 스크롤 바를 앞 뒤로 이동했을 경우
+                } else if (nowTime - playTime >= 2 || playTime - nowTime >= 2) { // 스크롤 바를 앞 뒤로 이동했을 경우
 
                     // recycler view 클리어 시킨 다음 다시 서버에서 값을 받아온다.
                     mVodChatList.clear();

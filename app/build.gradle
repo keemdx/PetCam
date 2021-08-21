@@ -27,10 +27,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
-    }
-
 }
 
 dependencies {
@@ -63,7 +59,7 @@ dependencies {
     // 구글 로그인 연동
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
-    // 이미지 저장 (glide)
+    // 이미지 뷰 (glide)
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' // 글라이드 이미지
 
@@ -85,7 +81,7 @@ dependencies {
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.3'
 
     // https://mvnrepository.com/artifact/io.netty/netty-all
-    implementation group: 'io.netty', name: 'netty-all', version: '5.0.0.Alpha2'
+    implementation 'io.netty:netty-all:5.0.0.Alpha2'
 
 
 }

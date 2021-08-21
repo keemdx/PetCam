@@ -1,7 +1,9 @@
 package com.example.petcam.widget;
 
 public class TimeString {
-    /** 몇분전, 방금 전, */
+    /**
+     * 몇분전, 방금 전,
+     */
     // 게시글 시간을 불러와서 현재 시간이랑 비교
     // 분,시,일,월,년 계산 후 String을 반환한다.
 
