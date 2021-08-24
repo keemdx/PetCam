@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.petcam.R;
+import com.example.petcam.databinding.ActivityForgotPasswordBinding;
+import com.example.petcam.databinding.ActivityMainBinding;
 import com.example.petcam.network.ResultModel;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
@@ -33,33 +35,17 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
+    private ActivityForgotPasswordBinding binding;
     private EditText mEmail;
     private ServiceApi mServiceApi;
     private String userInputEmail;
 
-    // 클릭 리스너
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-
-                // 닫기 아이콘을 클릭했을 경우
-                case R.id.iv_close:
-                    finish(); // 이 액티비티를 닫는다.
-                    break;
-
-                // 이메일 발송 버튼을 클릭했을 경우
-                case R.id.btn_send_email:
-                    startEmailCheck();
-                    break;
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgot_password);
+        binding = ActivityForgotPasswordBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         // 상단 상태바(Status bar) 컬러를 블랙으로 바꾼다.
         makeStatusBarBlack(this);
@@ -67,18 +53,20 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         // ServiceApi 객체를 생성한다.
         mServiceApi = RetrofitClient.getClient().create(ServiceApi.class);
 
-        // UI 선언
-        mEmail = (EditText) findViewById(R.id.et_user_email);
+        mEmail = binding.etUserEmail;
+        binding.ivClose.setOnClickListener(v -> {
+            finish();
+        });
 
-        // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
-        findViewById(R.id.iv_close).setOnClickListener(onClickListener);
-        findViewById(R.id.btn_send_email).setOnClickListener(onClickListener);
+        binding.btnSendEmail.setOnClickListener(v -> {
+            startEmailCheck();
+        });
+
     }
 
     // 입력한 이메일이 가입되어 있는 계정인지 확인한다.
     private void startEmailCheck() {
         // 입력된 이메일 주소
-
         userInputEmail = mEmail.getText().toString(); // 사용자가 입력한 이메일
         boolean cancel = false;
         View focusView = null;

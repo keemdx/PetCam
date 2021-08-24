@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.petcam.R;
+import com.example.petcam.databinding.ActivityMainBinding;
 import com.example.petcam.ui.profile.ProfileFragment;
 import com.example.petcam.streaming.StreamingActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -32,36 +33,11 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final int MY_PERMISSIONS_REQUEST = 1001;
+    private ActivityMainBinding binding;
     private Intent intent;
-    private BottomNavigationView bottomNavigation;
-
     private HomeFragment homeFragment;
     private ProfileFragment profileFragment;
-
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-
-            switch (view.getId()) {
-
-                // 스트리밍 시작 버튼을 클릭했을 경우,
-                case R.id.btn_streaming:
-                    // 방송 시작 액티비티로 이동한다.
-                    intent = new Intent(getApplicationContext(), StreamingActivity.class);
-                    int cameraPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA);
-                    int audioPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
-                    if (cameraPermission == PackageManager.PERMISSION_DENIED || audioPermission == PackageManager.PERMISSION_DENIED) { // 권한 없어서 요청
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{
-                                Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        }, MY_PERMISSIONS_REQUEST);
-                    } else { // 권한 있음
-                        startActivity(intent);
-                    }
-                    break;
-            }
-        }
-    };
+    private final int MY_PERMISSIONS_REQUEST = 1001;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -81,14 +57,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         // 상단 상태바(Status bar) 컬러를 블랙으로 바꾼다.
         makeStatusBarBlack(this);
 
-        findViewById(R.id.btn_streaming).setOnClickListener(onClickListener);
+        binding.btnStreaming.setOnClickListener(v -> {
+            startStreamingActivity();
+        });
 
-        bottomNavigation = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigation;
+        bottomNavigation = binding.bottomNavigation;
         bottomNavigation.setOnNavigationItemSelectedListener(item -> {
 
             switch (item.getItemId()) {
@@ -125,6 +106,19 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.replace(R.id.container, profileFragment);
                 fragmentTransaction.commit();
                 break;
+        }
+    }
+
+    private void startStreamingActivity() {
+        intent = new Intent(getApplicationContext(), StreamingActivity.class);
+        int cameraPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA);
+        int audioPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECORD_AUDIO);
+        if (cameraPermission == PackageManager.PERMISSION_DENIED || audioPermission == PackageManager.PERMISSION_DENIED) { // 권한 없어서 요청
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, MY_PERMISSIONS_REQUEST);
+        } else { // 권한 있음
+            startActivity(intent);
         }
     }
 }

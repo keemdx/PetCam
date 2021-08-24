@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.petcam.databinding.ActivityIntroBinding;
+import com.example.petcam.databinding.ActivityLoginBinding;
 import com.example.petcam.ui.main.MainActivity;
 import com.example.petcam.R;
 import com.example.petcam.network.ResultModel;
@@ -42,44 +44,18 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private ActivityLoginBinding binding;
     private ServiceApi mServiceApi;
     private EditText mEmail, mPassword;
     private SharedPreferences pref;
     private String mName, mUid, mPhoto;
 
-
-    // =========================================================================================================
-    // 클릭 리스너
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-
-                // 뒤로 가기를 클릭했을 경우
-                case R.id.iv_backToIntro:
-                    finish(); // 이 액티비티를 닫는다.
-                    break;
-
-                // 사용자가 데이터를 입력한 후 로그인 버튼을 클릭했을 경우
-                case R.id.btn_login:
-                    attemptLogin(); // 로그인을 시도한다.
-                    break;
-
-                // 비밀번호를 잊으셨나요? 버튼을 클릭했을 경우
-                case R.id.btn_forgot_password:
-                    // 비밀번호 재설정 화면으로 넘어간다.
-                    Intent intent_forgot_pw = new Intent(getApplicationContext(), ForgotPasswordActivity.class);
-                    startActivity(intent_forgot_pw);
-                    break;
-            }
-        }
-    };
-    // =========================================================================================================
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         // 상단 상태바(Status bar) 컬러를 블랙으로 바꾼다.
         makeStatusBarBlack(this);
@@ -88,13 +64,13 @@ public class LoginActivity extends AppCompatActivity {
         mServiceApi = RetrofitClient.getClient().create(ServiceApi.class);
 
         // EditText 선언
-        mEmail = (EditText) findViewById(R.id.et_login_email); // 이메일 입력하는 부분
-        mPassword = (EditText) findViewById(R.id.et_login_password); // 비밀번호 입력하는 부분
+        mEmail = binding.etLoginEmail;
+        mPassword = binding.etLoginPassword;
 
-        // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
-        findViewById(R.id.btn_forgot_password).setOnClickListener(onClickListener);
-        findViewById(R.id.btn_login).setOnClickListener(onClickListener);
-        findViewById(R.id.iv_backToIntro).setOnClickListener(onClickListener);
+        binding.btnForgotPassword.setOnClickListener(v -> startForgotPasswordActivity());
+        binding.btnLogin.setOnClickListener(v -> attemptLogin());
+        binding.ivBackToIntro.setOnClickListener(v -> finish());
+
     }
 
 
@@ -139,6 +115,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // =========================================================================================================
+
+    private void startForgotPasswordActivity() {
+        Intent intent_forgot_pw = new Intent(getApplicationContext(), ForgotPasswordActivity.class);
+        startActivity(intent_forgot_pw);
+    }
+
     // 로그인 (서버 통신)
     private void startLogin(String email, String password) {
         mServiceApi.userLogin(email, password).enqueue(new Callback<ResultModel>() {
@@ -173,10 +155,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
 
                     // 로그인을 완료하고 홈(메인) 화면으로 넘어간다.
-                    Intent intent_login = new Intent(getApplicationContext(), MainActivity.class);
-                    intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent_login.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent_login);
+                    startMainActivity();
                 }
             }
 
@@ -189,6 +168,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
     // =========================================================================================================
+
+    private void startMainActivity() {
+        // 로그인을 완료하고 홈(메인) 화면으로 넘어간다.
+        Intent intent_login = new Intent(getApplicationContext(), MainActivity.class);
+        intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent_login.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent_login);
+    }
 
     // 정규식을 이용한 이메일 형식 체크
     private boolean isEmailValid(String email) {

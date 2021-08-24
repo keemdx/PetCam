@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.petcam.R;
+import com.example.petcam.databinding.ActivityMainBinding;
+import com.example.petcam.databinding.ActivitySearchBinding;
 import com.example.petcam.ui.chatting.SearchUserAdapter;
 import com.example.petcam.ui.chatting.SearchUserItem;
 import com.example.petcam.network.RetrofitClient;
@@ -35,6 +37,7 @@ import static com.example.petcam.function.App.makeStatusBarBlack;
 
 public class SearchActivity extends AppCompatActivity implements SearchUserAdapter.OnListItemSelectedInterface {
 
+    private ActivitySearchBinding binding;
     private ServiceApi mServiceApi;
     private SharedPreferences sharedPreferences;
     private EditText mUserInput;

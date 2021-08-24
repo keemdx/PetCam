@@ -14,6 +14,9 @@ import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.petcam.databinding.ActivityForgotPasswordBinding;
+import com.example.petcam.databinding.ActivityIntroBinding;
+import com.example.petcam.databinding.ActivityMainBinding;
 import com.example.petcam.ui.main.MainActivity;
 import com.example.petcam.R;
 import com.example.petcam.network.ResultModel;
@@ -50,45 +53,22 @@ import static com.example.petcam.function.App.USER_ID;
 
 public class IntroActivity extends AppCompatActivity {
 
+    private ActivityIntroBinding binding;
     private SharedPreferences pref;
     private ServiceApi service;
     private VideoView videoBG;
     private MediaPlayer mMediaPlayer;
+    private GoogleSignInClient mGoogleSignInClient;
+
     int mCurrentVideoPosition;
     int RC_SIGN_IN = 0;
-    GoogleSignInClient mGoogleSignInClient;
-
-    // 클릭 리스너
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-
-                // 회원가입 버튼
-                case R.id.btn_register:
-                    // 회원가입 텍스트뷰를 누르면 회원가입 페이지로 넘어간다.
-                    Intent intent_signUp = new Intent(getApplicationContext(), RegisterActivity.class);
-                    startActivity(intent_signUp);
-                    break;
-
-                // 로그인 버튼
-                case R.id.btn_login:
-                    Intent intent_login = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent_login);
-                    break;
-
-                // 구글 로그인 버튼
-                case R.id.btn_googleLogin:
-                    signIn();
-                    break;
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
+        binding = ActivityIntroBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         // =========================================================================================================
         // 자동 로그인 확인을 위한 부분
@@ -102,10 +82,7 @@ public class IntroActivity extends AppCompatActivity {
             Log.d(TAG, "USER_UID 값은? : " + USER_ID);
 
             // 로그인 한 경험이 있는 회원은 자동으로 MainActivity로 넘어간다.
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            startMainActivity();
             finish();
         }
         // =========================================================================================================
@@ -119,13 +96,12 @@ public class IntroActivity extends AppCompatActivity {
         // ServiceApi 객체를 생성한다.
         service = RetrofitClient.getClient().create(ServiceApi.class);
 
-        // 클릭 이벤트를 위해 버튼에 클릭 리스너 달아주기
-        findViewById(R.id.btn_register).setOnClickListener(onClickListener); // 회원가입 버튼
-        findViewById(R.id.btn_login).setOnClickListener(onClickListener); // 로그인 버튼
-        findViewById(R.id.btn_googleLogin).setOnClickListener(onClickListener); // 구글 로그인 버튼
+        binding.btnRegister.setOnClickListener(v -> startRegisterActivity());
+        binding.btnLogin.setOnClickListener(v -> startLoginActivity());
+        binding.btnGoogleLogin.setOnClickListener(v -> signIn());
 
         // 배경 비디오 뷰 화면
-        videoBG = (VideoView) findViewById(R.id.videoView);
+        videoBG = binding.videoView;
 
         Uri uri = Uri.parse("android.resource://"
                 + getPackageName()
@@ -199,6 +175,16 @@ public class IntroActivity extends AppCompatActivity {
         }
     }
 
+    private void startRegisterActivity() {
+        Intent intent_signUp = new Intent(getApplicationContext(), RegisterActivity.class);
+        startActivity(intent_signUp);
+    }
+
+    private void startLoginActivity() {
+        Intent intent_login = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent_login);
+    }
+
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             // account => 구글 로그인 정보를 담고 있다.
@@ -217,7 +203,6 @@ public class IntroActivity extends AppCompatActivity {
             Log.e("Error", "signInResult:failed code=" + e.getStatusCode());
         }
     }
-
 
     // 구글 로그인 요청
     private void checkGoogleId(String userPhoto, String userName, String userEmail) {
@@ -238,12 +223,8 @@ public class IntroActivity extends AppCompatActivity {
                     editor.putString(USER_NAME, result.getUserName());
                     editor.putString(USER_STATUS, result.getUserStatus());
                     editor.commit();
+                    startMainActivity();
 
-                    // 로그인을 완료하고 홈(메인) 화면으로 넘어간다.
-                    Intent intent = new Intent(IntroActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
                 } else {
                     Toast.makeText(IntroActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -256,6 +237,14 @@ public class IntroActivity extends AppCompatActivity {
                 t.printStackTrace(); // 에러 발생시 에러 발생 원인 단계별로 출력해 준다.
             }
         });
+    }
+
+    private void startMainActivity() {
+        // 로그인을 완료하고 홈(메인) 화면으로 넘어간다.
+        Intent intent = new Intent(IntroActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 

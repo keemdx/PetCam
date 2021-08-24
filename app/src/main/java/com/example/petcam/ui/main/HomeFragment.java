@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.petcam.R;
+import com.example.petcam.databinding.FragmentHomeBinding;
 import com.example.petcam.ui.chatting.ChatroomActivity;
 import com.example.petcam.network.RetrofitClient;
 import com.example.petcam.network.ServiceApi;
@@ -37,6 +38,7 @@ import static com.example.petcam.function.App.USER_UID;
 
 public class HomeFragment extends Fragment {
 
+    private FragmentHomeBinding binding;
     private ServiceApi mServiceApi;
     private String userID;
     private RecyclerView mFollowingRV, mPopularRV, mChartsRV;
@@ -45,7 +47,6 @@ public class HomeFragment extends Fragment {
     private List<ChartVideosItem> mVideosList;
     private RadioGroup radioGroup;
     private RadioButton mVideosRB, mChannelsRB;
-    private SwipeRefreshLayout mSwipeRefresh;
 
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
@@ -59,29 +60,29 @@ public class HomeFragment extends Fragment {
         SharedPreferences pref = getActivity().getSharedPreferences(LOGIN_STATUS, Activity.MODE_PRIVATE);
         userID = pref.getString(USER_UID, ""); // 유저 프로필 이미지
 
-        view.findViewById(R.id.iv_message).setOnClickListener(v -> startChatRoomActivity());
-        view.findViewById(R.id.iv_search).setOnClickListener(v -> startSearchActivity());
+        binding.ivMessage.setOnClickListener(v -> startChatRoomActivity());
+        binding.ivSearch.setOnClickListener(v -> startSearchActivity());
 
-        radioGroup = view.findViewById(R.id.rc_group);
-        mVideosRB = view.findViewById(R.id.rb_videos);
-        mChannelsRB = view.findViewById(R.id.rb_channels);
+        radioGroup = binding.rcGroup;
+        mVideosRB = binding.rbVideos;
+        mChannelsRB = binding.rbChannels;
         mVideosRB.setChecked(true);
 
         // 라이브 방송 중인 팔로잉 유저 (친구) 리스트
-        mFollowingRV = view.findViewById(R.id.rv_following);
+        mFollowingRV = binding.rvFollowing;
         LinearLayoutManager fManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         mFollowingRV.setLayoutManager(fManager); // LayoutManager 등록
 
         getLiveNowFriends(userID); // 라이브 중인 친구 리스트 가져오기
 
         // 현재 인기 실시간 방송 영상 리스트
-        mPopularRV = view.findViewById(R.id.rv_popular);
+        mPopularRV = binding.rvPopular;
         LinearLayoutManager pManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         mPopularRV.setLayoutManager(pManager); // LayoutManager 등록
 
 
         // 차트 리스트
-        mChartsRV = view.findViewById(R.id.rv_charts);
+        mChartsRV = binding.rvCharts;
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mChartsRV.setLayoutManager(manager); // LayoutManager 등록
 
@@ -113,12 +114,11 @@ public class HomeFragment extends Fragment {
         });
 
         // 스와이프로 새로고침하기
-        mSwipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // 동작이 완료 되면 새로고침 아이콘 없애기
-                mSwipeRefresh.setRefreshing(false);
+                binding.swipeRefresh.setRefreshing(false);
 
                 mFollowingList.clear();
                 mPopularList.clear();
@@ -132,10 +132,10 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     private void startSearchActivity() {
@@ -256,5 +256,11 @@ public class HomeFragment extends Fragment {
                 Log.e("오류태그", t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
